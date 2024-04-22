@@ -36,7 +36,7 @@ jobs:
           - name: Images list
             run: docker images
           - name: BUILD DOCKER
-            uses: docker/build-push-action@v5
+          - uses: docker/build-push-action@v5
             with:
               context: .
               push: true
