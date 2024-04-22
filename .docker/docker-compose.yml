@@ -2,12 +2,7 @@ version: '3.8'
 
 services:
   php-fpm:
-    build:
-      args:
-        user: sammy
-        uid: 1000
-      context: .
-      dockerfile: ./php/php.dockerfile
+    image: docker pull ghcr.io/dessybin/php_wintercms:latest
     volumes:
       - ../:/var/www/html
     ports:
@@ -16,9 +11,7 @@ services:
       - db
 
   apache-httpd:
-    build:
-      context: .
-      dockerfile: ./apache-conf/apache.dockerfile
+    image: docker pull ghcr.io/dessybin/apache_wintercms:latest
     volumes:
       - ../:/var/www/html
     ports:
