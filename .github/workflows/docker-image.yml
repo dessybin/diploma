@@ -10,10 +10,6 @@ jobs:
             - name: Build and push the image
               run: |
                 docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-            - name: Pull latest images
-              run: docker pull ghcr.io/dessybin/apache_wintercms:latest || true
-            - name: Images list
-              run: docker images
             - name: BUILD DOCKER
               uses: docker/build-push-action@v5
               with:
