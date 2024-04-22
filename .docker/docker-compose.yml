@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   php-fpm:
-    image: docker pull ghcr.io/dessybin/php_wintercms:latest
+    image: ghcr.io/dessybin/php_wintercms:latest
     volumes:
       - ../:/var/www/html
     ports:
@@ -11,7 +11,7 @@ services:
       - db
 
   apache-httpd:
-    image: docker pull ghcr.io/dessybin/apache_wintercms:latest
+    image: ghcr.io/dessybin/apache_wintercms:latest
     volumes:
       - ../:/var/www/html
     ports:
