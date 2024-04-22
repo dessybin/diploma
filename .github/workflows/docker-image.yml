@@ -5,9 +5,6 @@ on: push
 jobs:
     build_and_publish_apache:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: .docker
         steps:
             - uses: actions/checkout@v4
             - name: Build and push the image
@@ -29,27 +26,27 @@ jobs:
             - name: Logout
               run: |
                 docker logout ghcr.io
-    build_and_publish_php:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v4
-          - name: Build and push the image
-            run: |
-              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-          - name: Pull latest images
-            run: docker pull ghcr.io/dessybin/php_wintercms:latest || true
-          - name: Images list
-            run: docker images
-          - name: BUILD DOCKER
-            uses: docker/build-push-action@v5
-            with:
-              context: .
-              file: .docker/php/php.dockerfile
-              push: true
-              tags: ghcr.io/dessybin/php_wintercms:latest
-            #run: docker build -f .docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
-          - name: DOCKER PUSH
-            run: docker push ghcr.io/dessybin/php_wintercms:latest\
-          - name: Logout
-            run: |
-              docker logout ghcr.io
+#    build_and_publish_php:
+#        runs-on: ubuntu-latest
+#        steps:
+#          - uses: actions/checkout@v4
+#          - name: Build and push the image
+#            run: |
+#              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+#          - name: Pull latest images
+#            run: docker pull ghcr.io/dessybin/php_wintercms:latest || true
+#          - name: Images list
+#            run: docker images
+#          - name: BUILD DOCKER
+#            uses: docker/build-push-action@v5
+#            with:
+#              context: .
+#              file: .docker/php/php.dockerfile
+#              push: true
+#              tags: ghcr.io/dessybin/php_wintercms:latest
+#            #run: docker build -f .docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
+#          - name: DOCKER PUSH
+#            run: docker push ghcr.io/dessybin/php_wintercms:latest\
+#          - name: Logout
+#            run: |
+#              docker logout ghcr.io
