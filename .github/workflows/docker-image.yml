@@ -36,11 +36,11 @@ jobs:
           - name: Images list
             run: docker images
           - name: BUILD DOCKER
-          - uses: docker/build-push-action@v5
+            uses: docker/build-push-action@v5
             with:
               context: .
               push: true
-          tags: user/app:latest
+              tags: dessybin/php_wintercms:latest
             run: docker build -f .docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
           - name: DOCKER PUSH
             run: docker push ghcr.io/dessybin/php_wintercms:latest\
