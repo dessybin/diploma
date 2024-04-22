@@ -39,6 +39,7 @@ jobs:
             uses: docker/build-push-action@v5
             with:
               context: .
+              file: .docker/php/php.dockerfile
               push: true
               tags: dessybin/php_wintercms:latest
             #run: docker build -f .docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
