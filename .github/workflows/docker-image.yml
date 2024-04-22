@@ -17,6 +17,8 @@ jobs:
                 file: .docker/apache-conf/apache.dockerfile
                 push: true
                 tags: ghcr.io/dessybin/apache_wintercms:latest
+                cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
+                cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
             - name: DOCKER PUSH
               run: docker push ghcr.io/dessybin/apache_wintercms:latest\
             - name: Logout
