@@ -21,8 +21,8 @@ jobs:
                 tags: ghcr.io/dessybin/apache_wintercms:latest
                 cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
                 cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-            - name: DOCKER PUSH
-              run: docker push ghcr.io/dessybin/apache_wintercms:latest\
+#            - name: DOCKER PUSH
+#              run: docker push ghcr.io/dessybin/apache_wintercms:latest\
             - name: Logout
               run: |
                 docker logout ghcr.io
