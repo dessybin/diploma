@@ -18,7 +18,7 @@ jobs:
             - name: Images list
               run: docker images
             - name: BUILD DOCKER
-              run: docker build -f ./apache.dockerfile . --tag ghcr.io/dessybin/apache_wintercms:latest
+              run: docker build -f ../../.docker/apache-conf/apache.dockerfile . --tag ghcr.io/dessybin/apache_wintercms:latest
             - name: DOCKER PUSH
               run: docker push ghcr.io/dessybin/apache_wintercms:latest\
             - name: Logout
@@ -36,7 +36,7 @@ jobs:
           - name: Images list
             run: docker images
           - name: BUILD DOCKER
-            run: docker build -f ./php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
+            run: docker build -f ../../.docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
           - name: DOCKER PUSH
             run: docker push ghcr.io/dessybin/php_wintercms:latest\
           - name: Logout
