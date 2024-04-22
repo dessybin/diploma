@@ -9,7 +9,7 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
-            - name: login ghcr
+            - name: login GHCR
               run: |
                 docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
             - name: BUILD DOCKER
@@ -30,7 +30,7 @@ jobs:
           - uses: actions/checkout@v4
           - name: Set up Docker Buildx
             uses: docker/setup-buildx-action@v3
-          - name: login ghcr
+          - name: login GHCR
             run: |
               docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
           - name: Pull latest images
