@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: apache-conf
+                working-directory: .docker
         steps:
             - uses: actions/checkout@v4
             - name: Build and push the image
@@ -18,7 +18,7 @@ jobs:
             - name: Images list
               run: docker images
             - name: BUILD DOCKER
-              run: docker build -f ../../.docker/apache-conf/apache.dockerfile . --tag ghcr.io/dessybin/apache_wintercms:latest
+              run: docker build -f apache-conf/apache.dockerfile . --tag ghcr.io/dessybin/apache_wintercms:latest
             - name: DOCKER PUSH
               run: docker push ghcr.io/dessybin/apache_wintercms:latest\
             - name: Logout
