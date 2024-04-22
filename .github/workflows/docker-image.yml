@@ -5,9 +5,6 @@ on: push
 jobs:
     build_and_publish_apache:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: .docker
         steps:
             - uses: actions/checkout@v4
             - name: Build and push the image
@@ -21,7 +18,7 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                 context: .
-                file: apache-conf/apache.dockerfile
+                file: .docker/apache-conf/apache.dockerfile
                 push: true
                 tags: ghcr.io/dessybin/apache_wintercms:latest
             - name: DOCKER PUSH
