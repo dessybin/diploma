@@ -9,7 +9,7 @@ jobs:
             - uses: actions/checkout@v4
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
-            - name: Build and push the image
+            - name: login ghcr
               run: |
                 docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
             - name: BUILD DOCKER
@@ -21,32 +21,31 @@ jobs:
                 tags: ghcr.io/dessybin/apache_wintercms:latest
                 cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
                 cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-#            - name: DOCKER PUSH
-#              run: docker push ghcr.io/dessybin/apache_wintercms:latest\
             - name: Logout
               run: |
-                docker logout ghcr.io
-#    build_and_publish_php:
-#        runs-on: ubuntu-latest
-#        steps:
-#          - uses: actions/checkout@v4
-#          - name: Build and push the image
-#            run: |
-#              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-#          - name: Pull latest images
-#            run: docker pull ghcr.io/dessybin/php_wintercms:latest || true
-#          - name: Images list
-#            run: docker images
-#          - name: BUILD DOCKER
-#            uses: docker/build-push-action@v5
-#            with:
-#              context: .
-#              file: .docker/php/php.dockerfile
-#              push: true
-#              tags: ghcr.io/dessybin/php_wintercms:latest
-#            #run: docker build -f .docker/php/php.dockerfile . --tag ghcr.io/dessybin/php_wintercms:latest
-#          - name: DOCKER PUSH
-#            run: docker push ghcr.io/dessybin/php_wintercms:latest\
-#          - name: Logout
-#            run: |
-#              docker logout ghcr.io
+               docker logout ghcr.io
+    build_and_publish_php:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: login ghcr
+            run: |
+              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+          - name: Pull latest images
+            run: docker pull ghcr.io/dessybin/php_wintercms:latest || true
+          - name: Images list
+            run: docker images
+          - name: BUILD DOCKER
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              file: .docker/php/php.dockerfile
+              push: true
+              tags: ghcr.io/dessybin/php_wintercms:latest
+              cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
+              cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
+          - name: Logout
+            run: |
+              docker logout ghcr.io
