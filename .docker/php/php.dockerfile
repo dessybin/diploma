@@ -21,6 +21,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 RUN chmod 777 -R /var/www/html
 
+
 # Get latest Composer
 #RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 #&& php composer-setup.php --install-dir=/usr/bin --filename=composer

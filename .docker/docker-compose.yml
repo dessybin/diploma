@@ -3,8 +3,8 @@ version: '3.8'
 services:
   php-fpm:
     image: ghcr.io/dessybin/php_wintercms:latest
-    volumes:
-      - ./app:/var/www/html
+    #volumes:
+    #  - ../:/var/www/html
     ports:
       - 9900:80
     depends_on:
@@ -13,7 +13,7 @@ services:
   apache-httpd:
     image: ghcr.io/dessybin/apache_wintercms:latest
     volumes:
-      - ./app:/var/www/html
+      - ../:/var/www/html
     ports:
       - "80:80"
     depends_on:
