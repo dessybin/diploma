@@ -1,5 +1,6 @@
 .github
 .docker
+!apache.vhost.conf
 .site
 README.md
 CHANGELOG.md
