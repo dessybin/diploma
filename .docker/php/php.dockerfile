@@ -18,8 +18,8 @@ RUN docker-php-ext-install gd
 RUN docker-php-ext-install mbstring
 WORKDIR /var/www/html
 #RUN php artisan key:generate
+COPY . /var/www/html
 RUN chmod 777 -R /var/www/html
-
 
 # Get latest Composer
 #RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
