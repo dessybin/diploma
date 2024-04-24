@@ -1,6 +1,6 @@
 FROM httpd:2.4
 # Copy the Apache virtual host configuration file to the container
-COPY .docker/apache-conf/apache.vhost.conf /usr/local/apache2/conf/extra/apache.vhost.conf
+COPY ./apache.vhost.conf /usr/local/apache2/conf/extra/apache.vhost.conf
 
 # Enable Apache modules to ensure proper functionality
 RUN sed -i \
