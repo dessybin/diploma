@@ -62,7 +62,7 @@ return [
             'database' => env('DB_DATABASE', 'winter'),
             'driver' => 'pgsql',
             'host' => env('DB_HOST', 'db'),
-            'password' => env('DB_PASSWORD', '1ple'),
+            'password' => env('DB_PASSWORD', 'example'),
             'port' => env('DB_PORT', '5432'),
             'prefix' => '',
             'prefix_indexes' => true,
