@@ -1,5 +1,12 @@
 
+FROM alpine AS builder
+WORKDIR /var/www/html
+COPY . /var/www/html/
+RUN chmod 777 -R /var/www/html
+
 FROM php:8.1-fpm
+
+COPY --from=builder /var/www/html /var/www/html
 
 #ARG user
 #ARG uid
@@ -16,10 +23,10 @@ RUN docker-php-ext-install pdo pdo_pgsql pgsql
 RUN docker-php-ext-install curl
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install mbstring
-WORKDIR /var/www/html
+#WORKDIR /var/www/html
 #RUN php artisan key:generate
-COPY . /var/www/html
-RUN chmod 777 -R /var/www/html
+#COPY . /var/www/html
+#RUN chmod 777 -R /var/www/html
 
 
 # Get latest Composer
