@@ -5,11 +5,15 @@ services:
     image: ghcr.io/dessybin/php_wintercms:latest
     ports:
       - 9900:80
+    volumes:
+      - my-volume:/var/www/html
     depends_on:
       - db
 
   apache-httpd:
     image: ghcr.io/dessybin/apache_wintercms:latest
+    volumes:
+      - my-volume:/var/www/html
     ports:
       - "80:80"
     depends_on:
@@ -40,3 +44,5 @@ services:
     ports:
       - 8080:8080
 
+volumes:
+    my-volume:
