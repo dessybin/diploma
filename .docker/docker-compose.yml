@@ -15,6 +15,7 @@ services:
     image: ghcr.io/dessybin/apache_wintercms:latest
     volumes:
       - my-volume:/var/www/html
+      - my-storage:/var/www/html/storage
     ports:
       - "80:80"
     depends_on:
