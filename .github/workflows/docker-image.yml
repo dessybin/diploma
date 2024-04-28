@@ -32,6 +32,7 @@ jobs:
             configuration: phpunit.xml
             args: --coverage-text
             php_extensions: simplexml zip pdo_sqlite pdo pdo_pgsql pgsql curl gd mbstring
+            coverage_clover: "coverage/clover.xml"
     build_and_publish_apache:
         runs-on: ubuntu-latest
         steps:
