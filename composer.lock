@@ -6627,7 +6627,7 @@
                 "winter cms"
             ],
             "support": {
-                "source": "https://github.com/wintercms/wn-cms-module/tree/v1.2.5"
+                "source": "https://github.com/wintercms/wn-cms-module/tree/v1.2.6"
             },
             "funding": [
                 {
@@ -6700,7 +6700,7 @@
                 "winter cms"
             ],
             "support": {
-                "source": "https://github.com/wintercms/wn-system-module/tree/develop"
+                "source": "https://github.com/wintercms/wn-system-module/tree/v1.2.6"
             },
             "funding": [
                 {
@@ -8803,5 +8803,5 @@
         "php": "^8.0.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.2.0"
 }
