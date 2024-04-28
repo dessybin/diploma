@@ -3,6 +3,8 @@ name: DOCKER IMAGE CI FOR GHCR
 on: push
 
 jobs:
+    permissions:
+      security-events: write
     scanning:
       runs-on: ubuntu-latest
       steps:
