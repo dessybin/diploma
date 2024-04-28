@@ -89,6 +89,18 @@ jobs:
               tags: ghcr.io/dessybin/php_wintercms:latest
               cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
               cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
+          - name: Run Trivy vulnerability scanner
+            uses: aquasecurity/trivy-action@master
+            with:
+              image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
+              format: 'table'
+              exit-code: '1'
+              ignore-unfixed: true
+              vuln-type: 'os,library'
+              severity: 'CRITICAL,HIGH'
+            env:
+              TRIVY_USERNAME: dessybin
+              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}          
           - name: Logout
             run: |
               docker logout ghcr.io
