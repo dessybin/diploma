@@ -18,6 +18,18 @@ jobs:
           with:
             path: .
             options: --exclude=vendor
+      tests:
+        runs-on: ubuntu-latest
+        steps:
+           name: PHPUnit Tests
+        uses: php-actions/phpunit@master
+        env:
+          TEST_NAME: Dessy WinterCMS Tests
+        with:
+          version: 9.6
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
+          args: --coverage-text
     build_and_publish_apache:
         runs-on: ubuntu-latest
         steps:
