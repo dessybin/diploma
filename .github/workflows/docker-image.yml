@@ -66,8 +66,8 @@ jobs:
                 vuln-type: 'os,library'
                 severity: 'CRITICAL,HIGH'
               env:
-                TRIVY_USERNAME: ${{ secrets.GH_LOGIN }}
-                TRIVY_PASSWORD: ${{ secrets.GH_PASS }}
+                TRIVY_USERNAME: ${{ dessybin }}
+                TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
             - name: Logout
               run: |
                docker logout ghcr.io
