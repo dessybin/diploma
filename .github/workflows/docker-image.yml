@@ -13,7 +13,11 @@ jobs:
               path: ~/.symfony/cache
               key: db
         - uses: symfonycorp/security-checker-action@v5
-
+        - name: Lint PHP files
+          uses: overtrue/phplint@main
+          with:
+          path: .
+          options: --exclude=vendor
     build_and_publish_apache:
         runs-on: ubuntu-latest
         steps:
