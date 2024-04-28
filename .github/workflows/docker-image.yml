@@ -24,7 +24,7 @@ jobs:
             path: .
             options: --exclude=vendor
         - name: PSALM
-          uses: docker://ghcr.io/psalm/psalm-security-scan
+          uses: docker://ghcr.io/psalm/psalm-github-actions
           with:
             security_analysis: true
             composer_require_dev: true
