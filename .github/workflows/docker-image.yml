@@ -6,6 +6,11 @@ jobs:
     scanning:
       runs-on: ubuntu-latest
       steps:
+        - name: Setup PHP with PECL extension
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.3'
+            extensions: gd
         - uses: actions/checkout@v2
         - uses: actions/cache@v2
           id: cache-db
