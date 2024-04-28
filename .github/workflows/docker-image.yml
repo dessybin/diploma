@@ -98,9 +98,15 @@ jobs:
               ignore-unfixed: true
               vuln-type: 'os,library'
               severity: 'CRITICAL,HIGH'
+              format: 'sarif'
+              output: 'trivy-results.sarif'
             env:
               TRIVY_USERNAME: dessybin
-              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}          
+              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+          - name: Upload Trivy scan results to GitHub Security tab
+            uses: github/codeql-action/upload-sarif@v2
+            with:
+              sarif_file: 'trivy-results.sarif'        
           - name: Logout
             run: |
               docker logout ghcr.io
