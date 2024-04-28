@@ -23,8 +23,15 @@ jobs:
           with:
             path: .
             options: --exclude=vendor
-        - name: Exakat
-          uses: docker://exakat/exakat-ga-compatibility-php-80
+        - name: RIPS    
+          uses: rips/github-action-scan@v1
+          env:
+            RIPS_BASE_URI: "https://api-3.ripstech.com"
+            RIPS_EMAIL: ${{ secrets.RIPS_EMAIL }}
+            RIPS_PASSWORD: ${{ secrets.RIPS_PASSWORD }}
+          with:
+            application-id: 923
+            additional-parameters: -t critical:10 
     tests:
       runs-on: ubuntu-latest
       steps:
