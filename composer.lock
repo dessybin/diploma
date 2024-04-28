@@ -3296,20 +3296,20 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.7.5",
+            "version": "4.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e"
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/91039bc1faa45ba123c4328958e620d382ec7088",
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11",
+                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11 || ^0.12",
                 "ext-json": "*",
                 "php": "^8.0",
                 "ramsey/collection": "^1.2 || ^2.0"
@@ -3372,7 +3372,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.7.5"
+                "source": "https://github.com/ramsey/uuid/tree/4.7.6"
             },
             "funding": [
                 {
@@ -3384,7 +3384,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-08T05:53:05+00:00"
+            "time": "2024-04-27T21:32:50+00:00"
         },
         {
             "name": "scssphp/scssphp",
@@ -6379,12 +6379,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wintercms/storm.git",
-                "reference": "faf49137344e9bff44b995adb35ff0a7633e7d65"
+                "reference": "457dd1f43fc2bac85347eb1561e97f38a48006e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wintercms/storm/zipball/faf49137344e9bff44b995adb35ff0a7633e7d65",
-                "reference": "faf49137344e9bff44b995adb35ff0a7633e7d65",
+                "url": "https://api.github.com/repos/wintercms/storm/zipball/457dd1f43fc2bac85347eb1561e97f38a48006e0",
+                "reference": "457dd1f43fc2bac85347eb1561e97f38a48006e0",
                 "shasum": ""
             },
             "require": {
@@ -6495,7 +6495,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-04-17T22:11:43+00:00"
+            "time": "2024-04-25T22:57:35+00:00"
         },
         {
             "name": "winter/wn-backend-module",
@@ -6503,12 +6503,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wintercms/wn-backend-module.git",
-                "reference": "708c0498eb910c98514181aaa99e2937067053c5"
+                "reference": "4c88bac6d1270f3f64ced4a5367098e809f809f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wintercms/wn-backend-module/zipball/708c0498eb910c98514181aaa99e2937067053c5",
-                "reference": "708c0498eb910c98514181aaa99e2937067053c5",
+                "url": "https://api.github.com/repos/wintercms/wn-backend-module/zipball/4c88bac6d1270f3f64ced4a5367098e809f809f9",
+                "reference": "4c88bac6d1270f3f64ced4a5367098e809f809f9",
                 "shasum": ""
             },
             "require": {
@@ -6567,7 +6567,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-04-21T04:52:13+00:00"
+            "time": "2024-04-27T14:54:03+00:00"
         },
         {
             "name": "winter/wn-cms-module",
@@ -6647,12 +6647,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wintercms/wn-system-module.git",
-                "reference": "895b22c129fdc0824fcc2520ceb2aa0641d8bc87"
+                "reference": "879168a8bdb6babeee84831c8fbc363e5fd7b5b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wintercms/wn-system-module/zipball/895b22c129fdc0824fcc2520ceb2aa0641d8bc87",
-                "reference": "895b22c129fdc0824fcc2520ceb2aa0641d8bc87",
+                "url": "https://api.github.com/repos/wintercms/wn-system-module/zipball/879168a8bdb6babeee84831c8fbc363e5fd7b5b3",
+                "reference": "879168a8bdb6babeee84831c8fbc363e5fd7b5b3",
                 "shasum": ""
             },
             "require": {
@@ -6712,7 +6712,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-04-21T06:20:52+00:00"
+            "time": "2024-04-25T21:49:06+00:00"
         }
     ],
     "packages-dev": [
@@ -8653,16 +8653,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.9.1",
+            "version": "3.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "267a4405fff1d9c847134db3a3c92f1ab7f77909"
+                "reference": "aac1f6f347a5c5ac6bc98ad395007df00990f480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/267a4405fff1d9c847134db3a3c92f1ab7f77909",
-                "reference": "267a4405fff1d9c847134db3a3c92f1ab7f77909",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/aac1f6f347a5c5ac6bc98ad395007df00990f480",
+                "reference": "aac1f6f347a5c5ac6bc98ad395007df00990f480",
                 "shasum": ""
             },
             "require": {
@@ -8729,7 +8729,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-03-31T21:03:09+00:00"
+            "time": "2024-04-23T20:25:34+00:00"
         },
         {
             "name": "theseer/tokenizer",

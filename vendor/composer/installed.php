@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '9ad2c53c0514a7cc076dc461d8ce71f715f07285',
+        'reference' => '347f896b4e7c944bbe2d5828fb33107d6d53392c',
         'name' => 'wintercms/winter',
         'dev' => true,
     ),
@@ -815,18 +815,18 @@
             'dev_requirement' => false,
         ),
         'ramsey/uuid' => array(
-            'pretty_version' => '4.7.5',
-            'version' => '4.7.5.0',
+            'pretty_version' => '4.7.6',
+            'version' => '4.7.6.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../ramsey/uuid',
             'aliases' => array(),
-            'reference' => '5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e',
+            'reference' => '91039bc1faa45ba123c4328958e620d382ec7088',
             'dev_requirement' => false,
         ),
         'rhumsaa/uuid' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '4.7.5',
+                0 => '4.7.6',
             ),
         ),
         'roundcube/plugin-installer' => array(
@@ -995,12 +995,12 @@
             ),
         ),
         'squizlabs/php_codesniffer' => array(
-            'pretty_version' => '3.9.1',
-            'version' => '3.9.1.0',
+            'pretty_version' => '3.9.2',
+            'version' => '3.9.2.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../squizlabs/php_codesniffer',
             'aliases' => array(),
-            'reference' => '267a4405fff1d9c847134db3a3c92f1ab7f77909',
+            'reference' => 'aac1f6f347a5c5ac6bc98ad395007df00990f480',
             'dev_requirement' => true,
         ),
         'symfony/console' => array(
@@ -1375,7 +1375,7 @@
                 0 => '9999999-dev',
                 1 => '1.2',
             ),
-            'reference' => 'faf49137344e9bff44b995adb35ff0a7633e7d65',
+            'reference' => '457dd1f43fc2bac85347eb1561e97f38a48006e0',
             'dev_requirement' => false,
         ),
         'winter/wn-backend-module' => array(
@@ -1386,7 +1386,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '708c0498eb910c98514181aaa99e2937067053c5',
+            'reference' => '4c88bac6d1270f3f64ced4a5367098e809f809f9',
             'dev_requirement' => false,
         ),
         'winter/wn-cms-module' => array(
@@ -1408,7 +1408,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => '895b22c129fdc0824fcc2520ceb2aa0641d8bc87',
+            'reference' => '879168a8bdb6babeee84831c8fbc363e5fd7b5b3',
             'dev_requirement' => false,
         ),
         'wintercms/winter' => array(
@@ -1417,7 +1417,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '9ad2c53c0514a7cc076dc461d8ce71f715f07285',
+            'reference' => '347f896b4e7c944bbe2d5828fb33107d6d53392c',
             'dev_requirement' => false,
         ),
     ),
