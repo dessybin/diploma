@@ -58,23 +58,23 @@ jobs:
                 tags: ghcr.io/dessybin/apache_wintercms:latest
                 cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
                 cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-          - name: Run Trivy vulnerability scanner
-            uses: aquasecurity/trivy-action@master
-            with:
-              image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
-              exit-code: '1'
-              ignore-unfixed: true
-              vuln-type: 'os,library'
-              severity: 'CRITICAL,HIGH'
-              format: 'sarif'
-              output: 'trivy-results.sarif'
-            env:
-              TRIVY_USERNAME: dessybin
-              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-          - name: Upload Trivy scan results to GitHub Security tab
-            uses: github/codeql-action/upload-sarif@v3
-            with:
-              sarif_file: 'trivy-results.sarif'  
+            - name: Run Trivy vulnerability scanner
+              uses: aquasecurity/trivy-action@master
+              with:
+                image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
+                exit-code: '1'
+                ignore-unfixed: true
+                vuln-type: 'os,library'
+                severity: 'CRITICAL,HIGH'
+                format: 'sarif'
+                output: 'trivy-results.sarif'
+              env:
+                TRIVY_USERNAME: dessybin
+                TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+            - name: Upload Trivy scan results to GitHub Security tab
+              uses: github/codeql-action/upload-sarif@v3
+              with:
+                sarif_file: 'trivy-results.sarif'  
             - name: Logout
               run: |
                docker logout ghcr.io
