@@ -25,6 +25,8 @@ jobs:
           with:
             path: .
             options: --exclude=vendor
+        - name: BEARER scan
+          uses: bearer/bearer-action@v2
 #        - name: RIPS    
 #          uses: rips/github-action-scan@v1
 #          env:
