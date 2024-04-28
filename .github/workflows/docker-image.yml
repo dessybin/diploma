@@ -58,43 +58,10 @@ jobs:
                 tags: ghcr.io/dessybin/apache_wintercms:latest
                 cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
                 cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-            - name: Run Trivy vulnerability scanner
-              uses: aquasecurity/trivy-action@master
-              with:
-                image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
-                format: 'table'
-                exit-code: '1'
-                ignore-unfixed: true
-                vuln-type: 'os,library'
-                severity: 'CRITICAL,HIGH'
-              env:
-                TRIVY_USERNAME: dessybin
-                TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-            - name: Logout
-              run: |
-               docker logout ghcr.io
-    build_and_publish_php:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v4
-          - name: Set up Docker Buildx
-            uses: docker/setup-buildx-action@v3
-          - name: login GHCR
-            run: |
-              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-          - name: BUILD DOCKER
-            uses: docker/build-push-action@v5
-            with:
-              context: .
-              file: .docker/php/php.dockerfile
-              push: true
-              tags: ghcr.io/dessybin/php_wintercms:latest
-              cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
-              cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
           - name: Run Trivy vulnerability scanner
             uses: aquasecurity/trivy-action@master
             with:
-              image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
+              image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
               exit-code: '1'
               ignore-unfixed: true
               vuln-type: 'os,library'
@@ -107,7 +74,46 @@ jobs:
           - name: Upload Trivy scan results to GitHub Security tab
             uses: github/codeql-action/upload-sarif@v3
             with:
-              sarif_file: 'trivy-results.sarif'        
-          - name: Logout
-            run: |
-              docker logout ghcr.io
+              sarif_file: 'trivy-results.sarif'  
+            - name: Logout
+              run: |
+               docker logout ghcr.io
+#    build_and_publish_php:
+#        runs-on: ubuntu-latest
+#        steps:
+#          - uses: actions/checkout@v4
+#          - name: Set up Docker Buildx
+#            uses: docker/setup-buildx-action@v3
+#          - name: login GHCR
+#            run: |
+#              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+#          - name: BUILD DOCKER
+#            uses: docker/build-push-action@v5
+#            with:
+#              context: .
+#              file: .docker/php/php.dockerfile
+#              push: true
+#              tags: ghcr.io/dessybin/php_wintercms:latest
+#              cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
+#              cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
+#          - name: Run Trivy vulnerability scanner
+#            uses: aquasecurity/trivy-action@master
+#            with:
+#              image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
+#              exit-code: '1'
+#              ignore-unfixed: true
+#              vuln-type: 'os,library'
+#              severity: 'CRITICAL,HIGH'
+#              format: 'sarif'
+#              output: 'trivy-results.sarif'
+#            env:
+#              TRIVY_USERNAME: dessybin
+#              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+#          - name: Upload Trivy scan results to GitHub Security tab
+#            uses: github/codeql-action/upload-sarif@v3
+#            with:
+#              sarif_file: 'trivy-results.sarif'        
+#          - name: Logout
+#            run: |
+#              docker logout ghcr.io
+#
