@@ -64,8 +64,8 @@ jobs:
                 image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
                 exit-code: '1'
                 ignore-unfixed: true
-                vuln-type: 'os,library'
-                severity: 'CRITICAL,HIGH'
+#                vuln-type: 'os,library'
+#                severity: 'CRITICAL,HIGH'
                 format: 'sarif'
                 output: 'trivy-results.sarif'
               env:
