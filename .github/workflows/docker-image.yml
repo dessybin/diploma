@@ -36,7 +36,7 @@ jobs:
         - name: Upload Bearer scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: 'bearer-results.sarif' 
+            sarif_file: 'results.sarif' 
 
 #        - name: RIPS    
 #          uses: rips/github-action-scan@v1
