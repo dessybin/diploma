@@ -66,7 +66,7 @@ jobs:
                 vuln-type: 'os,library'
                 severity: 'CRITICAL,HIGH'
               env:
-                TRIVY_USERNAME: ${{ dessybin }}
+                TRIVY_USERNAME: dessybin
                 TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
             - name: Logout
               run: |
