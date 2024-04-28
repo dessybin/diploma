@@ -8,6 +8,9 @@ services:
     volumes:
       - my-volume:/var/www/html
       - my-storage:/var/www/html/storage
+      - my-config-storage:/var/www/html/config
+      - my-plugins-base:/var/www/html/plugin
+      - my-themes-base:/var/www/html/themes
     depends_on:
       - db
 
@@ -16,6 +19,7 @@ services:
     volumes:
       - my-volume:/var/www/html
       - my-storage:/var/www/html/storage
+      - my-config-storage:/var/www/html/config
     ports:
       - "80:80"
     depends_on:
@@ -49,3 +53,6 @@ services:
 volumes:
     my-volume:
     my-storage:
+    my-config-storage:
+    my-plugins-base:
+    my-themes-base:
