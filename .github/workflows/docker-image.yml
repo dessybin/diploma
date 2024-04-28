@@ -28,7 +28,7 @@ jobs:
             TEST_NAME: Dessy WinterCMS Tests
           with:
             version: 9.6
-            bootstrap: bootstrap/autoload.php
+            bootstrap: modules/system/tests/bootstrap/app.php
             configuration: phpunit.xml
             args: --coverage-text
             php_extensions: simplexml zip pdo_sqlite pdo pdo_pgsql pgsql curl gd mbstring
