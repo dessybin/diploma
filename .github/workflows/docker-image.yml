@@ -28,17 +28,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
-#        - name: PHPUnit Tests
-#          uses: php-actions/phpunit@master
-#          env:
-#            TEST_NAME: Dessy WinterCMS Tests
-#          with:
-#            version: 9.6
-#            bootstrap: modules/system/tests/bootstrap/app.php
-#            configuration: phpunit.xml
-#            args: --coverage-text
-#            php_extensions: simplexml zip pdo_sqlite pdo pdo_pgsql pgsql curl gd mbstring
-#            coverage_clover: "coverage/clover.xml"
+        - name: PHPUnit Tests
+          uses: nathanheffley/laravel-phpunit-action@master
     build_and_publish_apache:
         runs-on: ubuntu-latest
         steps:
