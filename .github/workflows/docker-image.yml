@@ -20,6 +20,10 @@ jobs:
             options: --exclude=vendor
         - name: PSALM
           uses: docker://ghcr.io/psalm/psalm-security-scan
+          with:
+            security_analysis: true
+            composer_require_dev: true
+            composer_ignore_platform_reqs: true
     tests:
       runs-on: ubuntu-latest
       steps:
