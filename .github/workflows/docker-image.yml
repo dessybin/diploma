@@ -126,13 +126,9 @@ jobs:
         steps:
           - uses: actions/checkout@v4          
           - name: install ssh keys
-            # check this thread to understand why its needed:
-            # <https://stackoverflow.com/a/70447517>
             run: |
               install -m 600 -D /dev/null ~/.ssh/id_rsa
               echo "echo ${{ secrets.SSH_PASSPH }}" > ~/.ssh/.ssh_askpass && chmod +x ~/.ssh_askpass
-#              #echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#              ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
               echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh/.ssh_askpass ssh-add - >/dev/null
           - name: create docker compose config
             run: |
