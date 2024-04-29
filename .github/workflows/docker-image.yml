@@ -123,7 +123,7 @@ jobs:
               passphrase: ${{ secrets.SSH_PASSPH }}
               key: ${{ secrets.SSH_PRIVATE_KEY }}
               script: /home/deployuser/app/.docker/startup.sh
-    DAST OWASP ZAP:
+    dast_owasp_zap:
         needs: deploy
         runs-on: ubuntu-latest
         steps:
