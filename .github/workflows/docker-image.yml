@@ -39,9 +39,11 @@ jobs:
         - uses: symfonycorp/security-checker-action@v5
     
     sast-step:
+    
       needs: [lint-php-check, tests, dep-analyze]
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v4
         - name: BEARER scan
           uses: bearer/bearer-action@v2
           with:
