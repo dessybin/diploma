@@ -145,4 +145,4 @@ jobs:
               username: ${{ secrets.SSH_USER }}
               passphrase: ${{ secrets.SSH_PASSPH }}
               key: ${{ secrets.SSH_PRIVATE_KEY }}
-              script: whoami
+              script: /home/deployuser/app/.docker/startup.sh
