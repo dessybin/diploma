@@ -78,6 +78,7 @@ jobs:
     container-check-apache:
       runs-on: ubuntu-latest
       needs: build_and_publish_apache
+      steps:
         - name: login GHCR
           run: |
             docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
@@ -123,6 +124,7 @@ jobs:
     container-check-php:
       runs-on: ubuntu-latest
       needs: build_and_publish_php
+      steps:
         - name: login GHCR
           run: |
             docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io          
