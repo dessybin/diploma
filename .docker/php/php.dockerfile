@@ -6,8 +6,6 @@ RUN chmod 777 -R /var/www/html
 
 FROM php:8.1-fpm
 
-COPY --from=builder /var/www/html /var/www/html
-
 #ARG user
 #ARG uid
 #COPY ./app /var/www/html
@@ -23,17 +21,6 @@ RUN docker-php-ext-install pdo pdo_pgsql pgsql
 RUN docker-php-ext-install curl
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install mbstring
-#WORKDIR /var/www/html
-#RUN php artisan key:generate
-#COPY . /var/www/html
-#RUN chmod 777 -R /var/www/html
 
-
-# Get latest Composer
-#RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-#&& php composer-setup.php --install-dir=/usr/bin --filename=composer
-# Create system user to run Composer and Artisan Commands
-#RUN useradd -G www-data,root -u $uid -d /home/$user $user
-#WORKDIR /var/www/html
-#COPY ../app /var/www/html
-#RUN composer install
+COPY --from=builder /var/www/html /var/www/html
+RUN chown -R www-data:www-data /var/www/
