@@ -138,8 +138,10 @@ jobs:
               eval `ssh-agent -s`
               echo 'Add the private key'
               cat ~/.ssh/private.key | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh/passphrase ssh-add -
+          - name: Print ssh-add identities
+            run: ssh-add -l
           - name: create docker compose config
             run: |
-              cat docker-compose.yml | envsubst > docker-compose-secret.yml
+              cat .docker/docker-compose.yml | envsubst > .docker/docker-compose-secret.yml
           - name: copy docker compose config
-            run: scp docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/deployuser/docker-compose.yml
+            run: scp .docker/docker-compose-secret.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/deployuser/docker-compose.yml
