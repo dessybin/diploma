@@ -6,7 +6,6 @@ permissions:
   security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
   actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
 jobs:
-
     scanning:
       runs-on: ubuntu-latest
       steps:
@@ -37,16 +36,6 @@ jobs:
           uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: 'results.sarif' 
-
-#        - name: RIPS    
-#          uses: rips/github-action-scan@v1
-#          env:
-#            RIPS_BASE_URI: "https://api-3.ripstech.com"
-#            RIPS_EMAIL: ${{ secrets.RIPS_EMAIL }}
-#            RIPS_PASSWORD: ${{ secrets.RIPS_PASSWORD }}
-#          with:
-#            application-id: 923
-#            additional-parameters: -t critical:10 
     tests:
       runs-on: ubuntu-latest
       steps:
@@ -126,19 +115,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4          
-#          - name: create docker compose config
-#            run: |
-#              cat .docker/docker-compose.yml | envsubst > .docker/docker-compose-secret.yml
-#          - name: copy docker compose config
-#            uses: appleboy/scp-action@master
-#            with:
-#              host: ${{ secrets.SSH_HOST }}
-#              username: ${{ secrets.SSH_USER }}
-#              key: ${{ secrets.SSH_PRIVATE_KEY }}
-#              passphrase: ${{ secrets.SSH_PASSPH }}
-#              rm: true
-#              source: ".docker/docker-compose.yml, .docker/startup.sh"
-#              target: "/home/deployuser/app"
           - name: executing remote ssh commands using password
             uses: appleboy/ssh-action@v1.0.3
             with:
@@ -147,3 +123,11 @@ jobs:
               passphrase: ${{ secrets.SSH_PASSPH }}
               key: ${{ secrets.SSH_PRIVATE_KEY }}
               script: /home/deployuser/app/.docker/startup.sh
+    DAST OWASP ZAP:
+        needs: deploy
+        runs-on: ubuntu-latest
+        steps:
+          - name: ZAP Scan
+            uses: zaproxy/action-full-scan@v0.10.0
+            with:
+              target: 'http://87.249.53.20/'
