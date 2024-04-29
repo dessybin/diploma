@@ -7,121 +7,122 @@ permissions:
   actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
 jobs:
 
-#    scanning:
-#      runs-on: ubuntu-latest
-#      steps:
-#        - name: Setup PHP with PECL extension
-#          uses: shivammathur/setup-php@v2
+    scanning:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Setup PHP with PECL extension
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.3'
+            extensions: gd
+        - uses: actions/checkout@v2
+        - uses: actions/cache@v2
+          id: cache-db
+          with:
+              path: ~/.symfony/cache
+              key: db
+        - uses: symfonycorp/security-checker-action@v5
+        - name: Lint PHP files
+          uses: overtrue/phplint@main
+          with:
+            path: .
+            options: --exclude=vendor
+        - name: BEARER scan
+          uses: bearer/bearer-action@v2
+          with:
+            format: sarif
+            output: results.sarif
+            exit-code: 0
+        - name: Upload Bearer scan results to GitHub Security tab
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: 'results.sarif' 
+
+#        - name: RIPS    
+#          uses: rips/github-action-scan@v1
+#          env:
+#            RIPS_BASE_URI: "https://api-3.ripstech.com"
+#            RIPS_EMAIL: ${{ secrets.RIPS_EMAIL }}
+#            RIPS_PASSWORD: ${{ secrets.RIPS_PASSWORD }}
 #          with:
-#            php-version: '8.3'
-#            extensions: gd
-#        - uses: actions/checkout@v2
-#        - uses: actions/cache@v2
-#          id: cache-db
-#          with:
-#              path: ~/.symfony/cache
-#              key: db
-#        - uses: symfonycorp/security-checker-action@v5
-#        - name: Lint PHP files
-#          uses: overtrue/phplint@main
-#          with:
-#            path: .
-#            options: --exclude=vendor
-#        - name: BEARER scan
-#          uses: bearer/bearer-action@v2
-#          with:
-#            format: sarif
-#            output: results.sarif
-#            exit-code: 0
-#        - name: Upload Bearer scan results to GitHub Security tab
-#          uses: github/codeql-action/upload-sarif@v3
-#          with:
-#            sarif_file: 'results.sarif' 
-#
-##        - name: RIPS    
-##          uses: rips/github-action-scan@v1
-##          env:
-##            RIPS_BASE_URI: "https://api-3.ripstech.com"
-##            RIPS_EMAIL: ${{ secrets.RIPS_EMAIL }}
-##            RIPS_PASSWORD: ${{ secrets.RIPS_PASSWORD }}
-##          with:
-##            application-id: 923
-##            additional-parameters: -t critical:10 
-#    tests:
-#      runs-on: ubuntu-latest
-#      steps:
-#        - uses: actions/checkout@v3
-#        - name: PHPUnit Tests
-#          uses: nathanheffley/laravel-phpunit-action@master
-#    build_and_publish_apache:
-#        runs-on: ubuntu-latest
-#        steps:
-#            - uses: actions/checkout@v4
-#            - name: Set up Docker Buildx
-#              uses: docker/setup-buildx-action@v3
-#            - name: login GHCR
-#              run: |
-#                docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-#            - name: BUILD DOCKER
-#              uses: docker/build-push-action@v5
-#              with:
-#                context: .
-#                file: .docker/apache-conf/apache.dockerfile
-#                push: true
-#                tags: ghcr.io/dessybin/apache_wintercms:latest
-#                cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
-#                cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-#            - name: Run Trivy vulnerability scanner
-#              uses: aquasecurity/trivy-action@master
-#              with:
-#                image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
-#                format: 'sarif'
-#                output: 'trivy-results.sarif'
-#              env:
-#                TRIVY_USERNAME: dessybin
-#                TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-#            - name: Upload Trivy scan results to GitHub Security tab
-#              uses: github/codeql-action/upload-sarif@v3
-#              with:
-#                sarif_file: 'trivy-results.sarif'  
-#            - name: Logout
-#              run: |
-#               docker logout ghcr.io
-#    build_and_publish_php:
-#        runs-on: ubuntu-latest
-#        steps:
-#          - uses: actions/checkout@v4
-#          - name: Set up Docker Buildx
-#            uses: docker/setup-buildx-action@v3
-#          - name: login GHCR
-#            run: |
-#              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-#          - name: BUILD DOCKER
-#            uses: docker/build-push-action@v5
-#            with:
-#              context: .
-#              file: .docker/php/php.dockerfile
-#              push: true
-#              tags: ghcr.io/dessybin/php_wintercms:latest
-#              cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
-#              cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
-#          - name: Run Trivy vulnerability scanner
-#            uses: aquasecurity/trivy-action@master
-#            with:
-#              image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
-#              format: 'sarif'
-#              output: 'trivy-results.sarif'
-#            env:
-#              TRIVY_USERNAME: dessybin
-#              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-#          - name: Upload Trivy scan results to GitHub Security tab
-#            uses: github/codeql-action/upload-sarif@v3
-#            with:
-#              sarif_file: 'trivy-results.sarif'        
-#          - name: Logout
-#            run: |
-#              docker logout ghcr.io
+#            application-id: 923
+#            additional-parameters: -t critical:10 
+    tests:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - name: PHPUnit Tests
+          uses: nathanheffley/laravel-phpunit-action@master
+    build_and_publish_apache:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+            - name: login GHCR
+              run: |
+                docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+            - name: BUILD DOCKER
+              uses: docker/build-push-action@v5
+              with:
+                context: .
+                file: .docker/apache-conf/apache.dockerfile
+                push: true
+                tags: ghcr.io/dessybin/apache_wintercms:latest
+                cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
+                cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
+            - name: Run Trivy vulnerability scanner
+              uses: aquasecurity/trivy-action@master
+              with:
+                image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
+                format: 'sarif'
+                output: 'trivy-results.sarif'
+              env:
+                TRIVY_USERNAME: dessybin
+                TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+            - name: Upload Trivy scan results to GitHub Security tab
+              uses: github/codeql-action/upload-sarif@v3
+              with:
+                sarif_file: 'trivy-results.sarif'  
+            - name: Logout
+              run: |
+               docker logout ghcr.io
+    build_and_publish_php:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: login GHCR
+            run: |
+              docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+          - name: BUILD DOCKER
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              file: .docker/php/php.dockerfile
+              push: true
+              tags: ghcr.io/dessybin/php_wintercms:latest
+              cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
+              cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
+          - name: Run Trivy vulnerability scanner
+            uses: aquasecurity/trivy-action@master
+            with:
+              image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
+              format: 'sarif'
+              output: 'trivy-results.sarif'
+            env:
+              TRIVY_USERNAME: dessybin
+              TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+          - name: Upload Trivy scan results to GitHub Security tab
+            uses: github/codeql-action/upload-sarif@v3
+            with:
+              sarif_file: 'trivy-results.sarif'        
+          - name: Logout
+            run: |
+              docker logout ghcr.io
     deploy:
+        needs: [build_and_publish_php, build_and_publish_apache] 
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4          
@@ -145,4 +146,4 @@ jobs:
               username: ${{ secrets.SSH_USER }}
               passphrase: ${{ secrets.SSH_PASSPH }}
               key: ${{ secrets.SSH_PRIVATE_KEY }}
-              script: /home/deployuser/app/.docker/startup.sh
+              script: /home/deployuser/app/.
