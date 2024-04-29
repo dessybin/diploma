@@ -73,7 +73,7 @@ jobs:
             cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
         - name: Logout
           run: |
-          docker logout ghcr.io
+            docker logout ghcr.io
 
     container-check-apache:
       runs-on: ubuntu-latest
