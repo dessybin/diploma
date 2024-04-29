@@ -125,16 +125,24 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4          
-          - name: create docker compose config
-            run: |
-              cat .docker/docker-compose.yml | envsubst > .docker/docker-compose-secret.yml
-          - name: copy docker compose config
-            uses: appleboy/scp-action@master
+#          - name: create docker compose config
+#            run: |
+#              cat .docker/docker-compose.yml | envsubst > .docker/docker-compose-secret.yml
+#          - name: copy docker compose config
+#            uses: appleboy/scp-action@master
+#            with:
+#              host: ${{ secrets.SSH_HOST }}
+#              username: ${{ secrets.SSH_USER }}
+#              key: ${{ secrets.SSH_PRIVATE_KEY }}
+#              passphrase: ${{ secrets.SSH_PASSPH }}
+#              rm: true
+#              source: ".docker/docker-compose.yml, .docker/startup.sh"
+#              target: "/home/deployuser/app"
+          - name: executing remote ssh commands using password
+            uses: appleboy/ssh-action@v1.0.3
             with:
               host: ${{ secrets.SSH_HOST }}
               username: ${{ secrets.SSH_USER }}
-              key: ${{ secrets.SSH_PRIVATE_KEY }}
               passphrase: ${{ secrets.SSH_PASSPH }}
-              rm: true
-              source: ".docker/docker-compose.yml, .docker/startup.sh"
-              target: "/home/deployuser/app"
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              script: whoami
