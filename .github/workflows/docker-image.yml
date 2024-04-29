@@ -132,6 +132,12 @@ jobs:
               echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/private.key
               sudo chmod 400 ~/.ssh/private.key
               echo 'echo ${{ secrets.SSH_PASSPH }}' > ~/.ssh/passphrase && chmod 700 ~/.ssh/passphrase
+          - name: SSH dependency
+            run: |
+              echo 'Start the SSH agent'
+              eval `ssh-agent -s`
+              echo 'Add the private key'
+              cat ~/.ssh/private.key | tr -d '\r' | DISPLAY=None SSH_ASKPASS=~/.ssh/passphrase ssh-add -
           - name: create docker compose config
             run: |
               cat docker-compose.yml | envsubst > docker-compose-secret.yml
