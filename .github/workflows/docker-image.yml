@@ -122,11 +122,10 @@ jobs:
             run: |
               docker logout ghcr.io
     deploy:
-        name: Deploy
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4          
-            - name: install ssh keys
+          - name: install ssh keys
             # check this thread to understand why its needed:
             # <https://stackoverflow.com/a/70447517>
             run: |
