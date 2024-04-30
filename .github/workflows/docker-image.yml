@@ -187,7 +187,7 @@ jobs:
           with:
             target: 'http://87.249.53.20/'
     upload:
-      needs: [sast-step]
+      needs: [container-check-apache]
       runs-on: ubuntu-latest
       steps:
         - name: Get current date
@@ -196,8 +196,8 @@ jobs:
         - name: upload to faraday
           uses: infobyte/gha-faraday-report-uploader@main
           with:
-            host: ${{ secrets.FARADAY_HOST }}
+            host: http://87.249.53.20/
             username: ${{ secrets.FARADAY_USERNAME }}
             password: ${{ secrets.FARADAY_PASSWORD }}
             workspace: ${{ github.event.repository.name }}-${{ steps.date.output.date }}-${{ github.run_number }}
-            files: trivy-fs-results.sarif 
+            files: trivy-results.sarif
