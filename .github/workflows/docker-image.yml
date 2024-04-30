@@ -113,10 +113,10 @@ jobs:
           env:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-        - name: Upload Trivy scan results to GitHub Security tab
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: 'trivy-results.sarif'  
+#        - name: Upload Trivy scan results to GitHub Security tab
+#          uses: github/codeql-action/upload-sarif@v3
+#          with:
+#            sarif_file: 'trivy-results.sarif'  
         - name: Logout
           run: |
             docker logout ghcr.io
