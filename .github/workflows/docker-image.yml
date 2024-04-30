@@ -51,7 +51,6 @@ jobs:
             ignore-unfixed: true
             format: 'sarif'
             output: 'trivy-fs-results.sarif'
-#        - name: Run Codacy Analysis CLI
 #          uses: codacy/codacy-analysis-cli-action@master
 #          with:
 #            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -82,7 +81,7 @@ jobs:
           with:
             sarif_file: 'trivy-fs-results.sarif'
         - name: debug sarif
-          run: cat results.sarif
+          run: cat trivy-fs-results.sarif
     build_and_publish_apache:
       runs-on: ubuntu-latest
 
