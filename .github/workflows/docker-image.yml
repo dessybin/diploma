@@ -114,7 +114,7 @@ jobs:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
         - name: Upload Bandit Report
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v4
           with:
             name: trivy-results
             path: trivy-results.xml
