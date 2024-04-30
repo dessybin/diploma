@@ -194,10 +194,8 @@ jobs:
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
         - name: upload to faraday
-          uses: infobyte/gha-faraday-report-uploader@main
-          with:
-            host: http://87.249.53.20:5985/
-            username: ${{ secrets.FARADAY_USERNAME }}
-            password: ${{ secrets.FARADAY_PASSWORD }}
-            workspace: ${{ github.event.repository.name }}-${{ steps.date.output.date }}-${{ github.run_number }}
-            files: trivy-results.sarif
+          run: |
+            pip install faraday-cli
+            faraday-cli auth -f 87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
+            faraday-cli create_ws ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
+            faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} ./trivy-results.sarif
