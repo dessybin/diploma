@@ -197,5 +197,5 @@ jobs:
           run: |
             pip install faraday-cli
             faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
-            faraday-cli create_ws ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-            faraday-cli process_report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} ./trivy-results.sarif
+            faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} ./trivy-results.sarif
