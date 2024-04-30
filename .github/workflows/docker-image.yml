@@ -196,7 +196,7 @@ jobs:
         - name: upload to faraday
           uses: infobyte/gha-faraday-report-uploader@main
           with:
-            host: http://87.249.53.20/
+            host: http://87.249.53.20:5985/
             username: ${{ secrets.FARADAY_USERNAME }}
             password: ${{ secrets.FARADAY_PASSWORD }}
             workspace: ${{ github.event.repository.name }}-${{ steps.date.output.date }}-${{ github.run_number }}
