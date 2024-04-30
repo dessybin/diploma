@@ -113,6 +113,11 @@ jobs:
           env:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+        - name: Upload Bandit Report
+          uses: actions/upload-artifact@v2
+          with:
+            name: trivy-results
+            path: trivy-results.xml
 #        - name: Upload Trivy scan results to GitHub Security tab
 #          uses: github/codeql-action/upload-sarif@v3
 #          with:
@@ -190,6 +195,11 @@ jobs:
       needs: [container-check-apache]
       runs-on: ubuntu-latest
       steps:
+        - name: download artifact
+          uses: actions/download-artifact@master
+          with:
+            name: trivy-results
+            path: trivy-results
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
@@ -198,4 +208,4 @@ jobs:
             pip install faraday-cli
             faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
             faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results.xml
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results/trivy-results.xml
