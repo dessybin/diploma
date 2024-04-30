@@ -44,20 +44,27 @@ jobs:
       steps:
         - name: Checkout code
           uses: actions/checkout@v4
-        - name: Run Codacy Analysis CLI
-          uses: codacy/codacy-analysis-cli-action@master
-          with:
-            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-            verbose: true
-            output: results.sarif
-            format: sarif
-            # Adjust severity of non-security issues
-            gh-code-scanning-compat: true
-            # Force 0 exit code to allow SARIF file generation
-            # This will hand over control about PR rejection to the GitHub side
-            max-allowed-issues: 2147483647
-
-#      needs: [lint-php-check, tests, dep-analyze]
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+#        - name: Run Codacy Analysis CLI
+#          uses: codacy/codacy-analysis-cli-action@master
+#          with:
+#            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#            verbose: true
+#            output: results.sarif
+#            format: sarif
+#            # Adjust severity of non-security issues
+#            gh-code-scanning-compat: true
+#            # Force 0 exit code to allow SARIF file generation
+#            # This will hand over control about PR rejection to the GitHub side
+#            max-allowed-issues: 2147483647
+#
+##      needs: [lint-php-check, tests, dep-analyze]
 #      runs-on: ubuntu-latest
 #      steps:
 #        - uses: actions/checkout@v4
@@ -73,7 +80,7 @@ jobs:
         - name: Upload Bearer scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: 'results.sarif'
+            sarif_file: 'trivy-fs-results.sarif'
         - name: debug sarif
           run: cat results.sarif
     build_and_publish_apache:
