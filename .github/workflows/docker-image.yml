@@ -39,20 +39,30 @@ jobs:
         - uses: symfonycorp/security-checker-action@v5
     
     sast-step:
-    
-      needs: [lint-php-check, tests, dep-analyze]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: BEARER scan
-          uses: bearer/bearer-action@v2
+        - name: Run Codacy Analysis CLI
+          uses: codacy/codacy-analysis-cli-action@master
           with:
-            format: sarif
             output: results.sarif
-            severity: critical,high,medium,low,warning
-            quiet: false
-            hide-progress-bar: false
-            exit-code: 0
+            format: sarif
+            # Adjust severity of non-security issues
+            gh-code-scanning-compat: true
+            # Force 0 exit code to allow SARIF file generation
+            # This will hand over control about PR rejection to the GitHub side
+            max-allowed-issues: 2147483647
+
+#      needs: [lint-php-check, tests, dep-analyze]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v4
+#        - name: BEARER scan
+#          uses: bearer/bearer-action@v2
+#          with:
+#            format: sarif
+#            output: results.sarif
+#            severity: critical,high,medium,low,warning
+#            quiet: false
+#            hide-progress-bar: false
+#            exit-code: 0
         - name: Upload Bearer scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
