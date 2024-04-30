@@ -49,7 +49,7 @@ jobs:
             name: trivy-fs-results
             path: trivy-fs-results.sarif   
 
-    codasy-sast:
+    codacy-sast:
       needs: [lint-php-check, dep-analyze]
       runs-on: ubuntu-latest
       steps:
@@ -254,4 +254,8 @@ jobs:
             pip install faraday-cli
             faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
             faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-php.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-apache.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif            
