@@ -194,3 +194,18 @@ jobs:
           uses: zaproxy/action-full-scan@v0.10.0
           with:
             target: 'http://87.249.53.20/'
+    upload:
+      needs: [container-check-php,container-check-apache,sast-step]
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get current date
+          id: date
+          run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
+        - name: upload to faraday
+          uses: infobyte/gha-faraday-report-uploader@main
+          with:
+            host: ${{ secrets.FARADAY_HOST }}
+            username: ${{ secrets.FARADAY_USERNAME }}
+            password: ${{ secrets.FARADAY_PASSWORD }}
+            workspace: ${{ github.event.repository.name }}-${{ steps.date.output.date }}-${{ github.run_number }}
+            files: trivy-results.sarif trivy-fs-results.sarif 
