@@ -30,7 +30,7 @@ jobs:
               key: db
         - uses: symfonycorp/security-checker-action@v5
     
-    sast-step:
+    trivy-analyze-repo:
       needs: [lint-php-check, dep-analyze]
       runs-on: ubuntu-latest
       steps:
@@ -43,37 +43,63 @@ jobs:
             ignore-unfixed: true
             format: 'sarif'
             output: 'trivy-fs-results.sarif'
-#          uses: codacy/codacy-analysis-cli-action@master
-#          with:
-#            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-#            verbose: true
-#            output: results.sarif
-#            format: sarif
-#            # Adjust severity of non-security issues
-#            gh-code-scanning-compat: true
-#            # Force 0 exit code to allow SARIF file generation
-#            # This will hand over control about PR rejection to the GitHub side
-#            max-allowed-issues: 2147483647
-#
-##      needs: [lint-php-check, tests, dep-analyze]
-#      runs-on: ubuntu-latest
-#      steps:
-#        - uses: actions/checkout@v4
-#        - name: BEARER scan
-#          uses: bearer/bearer-action@v2
-#          with:
-#            format: sarif
-#            output: results.sarif
-#            severity: critical,high,medium,low,warning
-#            quiet: false
-#            hide-progress-bar: false
-#            exit-code: 0
+        - name: Upload Trivy-fs Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: trivy-fs-results
+            path: trivy-fs-results.sarif   
+
+    codasy-sast:
+      needs: [lint-php-check, dep-analyze]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: codacy sast  
+          uses: codacy/codacy-analysis-cli-action@master
+          with:
+            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+            verbose: true
+            output: codacy-results.sarif
+            format: sarif
+            # Adjust severity of non-security issues
+            gh-code-scanning-compat: true
+            # Force 0 exit code to allow SARIF file generation
+            # This will hand over control about PR rejection to the GitHub side
+            max-allowed-issues: 2147483647
+        - name: Upload Codacy Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: codacy-results
+            path: codacy-results.sarif  
+        - name: Upload Codacy scan results to GitHub Security tab
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: 'codacy-results.sarif'
+
+    bearer-sast:
+      needs: [lint-php-check, dep-analyze]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: BEARER scan
+          uses: bearer/bearer-action@v2
+          with:
+            format: sarif
+            output: bearer-results.sarif
+            severity: critical,high,medium,low,warning
+            quiet: false
+            hide-progress-bar: false
+            exit-code: 0
         - name: Upload Bearer scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: 'trivy-fs-results.sarif'
-        - name: debug sarif
-          run: cat trivy-fs-results.sarif
+            sarif_file: 'bearer-results.sarif'
+        - name: Upload Bearer Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: bearer-results
+            path: bearer-results.sarif  
+
     build_and_publish_apache:
       runs-on: ubuntu-latest
 
@@ -109,19 +135,19 @@ jobs:
           with:
             image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
             format: 'sarif'
-            output: 'trivy-results.sarif'
+            output: 'trivy-results-apache.sarif'
           env:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-        - name: Upload Bandit Report
+        - name: Upload Trivy-apache Report
           uses: actions/upload-artifact@v4
           with:
-            name: trivy-results
-            path: trivy-results.sarif
-#        - name: Upload Trivy scan results to GitHub Security tab
-#          uses: github/codeql-action/upload-sarif@v3
-#          with:
-#            sarif_file: 'trivy-results.sarif'  
+            name: trivy-results-apache
+            path: trivy-results-apache.sarif
+        - name: Upload Trivy scan results to GitHub Security tab
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            sarif_file: 'trivy-results.sarif'  
         - name: Logout
           run: |
             docker logout ghcr.io
@@ -160,10 +186,15 @@ jobs:
           with:
             image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
             format: 'sarif'
-            output: 'trivy-results.sarif'
+            output: 'trivy-results-php.sarif'
           env:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+        - name: Upload Trivy-php Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: trivy-results-php
+            path: trivy-results-php.sarif
         - name: Upload Trivy scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
@@ -192,13 +223,29 @@ jobs:
           with:
             target: 'http://87.249.53.20/'
     upload:
-      needs: [container-check-apache]
+      needs: [container-check-apache,container-check-php,bearer-sast,codacy-sast,trivy-analyze-repo]
       runs-on: ubuntu-latest
       steps:
-        - name: download artifact
+        - name: download artifact apache
           uses: actions/download-artifact@master
           with:
-            name: trivy-results
+            name: trivy-results-apache
+        - name: download artifact fs
+          uses: actions/download-artifact@master
+          with:
+            name: trivy-fs-results
+        - name: download artifact php
+          uses: actions/download-artifact@master
+          with:
+            name: trivy-results-php
+        - name: download artifact codacy
+          uses: actions/download-artifact@master
+          with:
+            name: codacy-results
+        - name: download artifact bearer
+          uses: actions/download-artifact@master
+          with:
+            name: bearer-results             
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
