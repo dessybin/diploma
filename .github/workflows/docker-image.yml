@@ -108,8 +108,8 @@ jobs:
           uses: aquasecurity/trivy-action@master
           with:
             image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
-            format: 'sarif'
-            output: 'trivy-results.sarif'
+            format: 'table'
+            output: 'trivy-results.xml'
           env:
             TRIVY_USERNAME: dessybin
             TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
@@ -198,4 +198,4 @@ jobs:
             pip install faraday-cli
             faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
             faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} ./trivy-results.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results.xml
