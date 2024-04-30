@@ -147,7 +147,7 @@ jobs:
         - name: Upload Trivy scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: 'trivy-results.sarif'  
+            sarif_file: 'trivy-results-apache.sarif'  
         - name: Logout
           run: |
             docker logout ghcr.io
@@ -198,7 +198,7 @@ jobs:
         - name: Upload Trivy scan results to GitHub Security tab
           uses: github/codeql-action/upload-sarif@v3
           with:
-            sarif_file: 'trivy-results.sarif'        
+            sarif_file: 'trivy-results-php.sarif'        
 
     deploy:
       needs: [container-check-php, container-check-apache] 
