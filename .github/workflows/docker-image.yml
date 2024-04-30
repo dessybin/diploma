@@ -44,13 +44,13 @@ jobs:
       steps:
         - name: Checkout code
           uses: actions/checkout@v4
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-fs-results.sarif'
+        - name: Run Trivy vulnerability scanner in repo mode
+          uses: aquasecurity/trivy-action@master
+          with:
+            scan-type: 'fs'
+            ignore-unfixed: true
+            format: 'sarif'
+            output: 'trivy-fs-results.sarif'
 #        - name: Run Codacy Analysis CLI
 #          uses: codacy/codacy-analysis-cli-action@master
 #          with:
