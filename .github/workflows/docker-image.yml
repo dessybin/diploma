@@ -7,46 +7,7 @@ permissions:
   actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
   issues: write
 jobs:
-    dependency_scan:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Local PHP Security Checker
-          uses: docker://pplotka/local-php-security-checker-github-actions
-          with:
-            format: markdown
-        - name: save last step artifact
-          run: | 
-            echo "${{ steps.local_php_security_checker.outputs.security }}" > lphp-results.md
-        
-        - name: Upload lphp-results scan results
-          uses: actions/upload-artifact@v4
-          with:
-            name: lphp-results
-            path: lphp-results.md
-
-        - name: scan with composer audit
-          continue-on-error: true
-          run: |
-            composer audit > composer-audit-result.txt
-
-        - name: Upload parallel lint scan results
-          uses: actions/upload-artifact@v4
-          with:
-            name: composer-audit-result
-            path: composer-audit-result.txt
-
-        - name: Setup PHP with PECL extension
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.1'
-            extensions: gd
-        - uses: php-actions/composer@v6
-          with:
-            verion: 2.7.5
-            args: --profile --ignore-platform-reqs
-
-    phpsast_advanced:
+   phpsast_advanced:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
@@ -118,6 +79,25 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
+        - name: Local PHP Security Checker
+          uses: docker://pplotka/local-php-security-checker-github-actions
+          with:
+            format: markdown
+        - name: save last step artifact
+          run: | 
+            echo "${{ steps.local_php_security_checker.outputs.security }}" > lphp-results.md
+        
+        - name: Upload lphp-results scan results
+          uses: actions/upload-artifact@v4
+          with:
+            name: lphp-results
+            path: lphp-results.md
+
+        - name: scan with composer audit
+          continue-on-error: true
+          run: |
+            composer audit > composer-audit-result.txt
+
         - uses: actions/cache@v2
           id: cache-db
           with:
