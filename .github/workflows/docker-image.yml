@@ -31,17 +31,17 @@ jobs:
           run: |
             composer require larastan/larastan:^2.0 --dev
             ./vendor/bin/phpstan analyse --error-format=github
-          - name: scan sast with laravel Enlightn OSS
+        - name: scan sast with laravel Enlightn OSS
           continue-on-error: true
           run: |
             composer require --dev vkcom/noverify
             ./vendor/bin/noverify-get
             ./vendor/bin/noverify check --output-json --output='reports.json' .
-          - name: Upload Trivy scan results to GitHub Security tab
-            uses: actions/upload-artifact@v4
-            with:
-              name: noverify-results
-              path: reports.json
+        - name: Upload Trivy scan results to GitHub Security tab
+          uses: actions/upload-artifact@v4
+          with:
+            name: noverify-results
+            path: reports.json
 #
 #    lint-php-check:
 #      runs-on: ubuntu-latest
