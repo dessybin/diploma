@@ -26,11 +26,11 @@ jobs:
         #    composer update
         #    composer require --dev php-parallel-lint/php-parallel-lint
         #    vendor/bin/parallel-lint --json .
-        - name: scan sast with laravel Enlightn OSS
-          continue-on-error: true
-          run: |
-            composer require larastan/larastan:^2.0 --dev
-            ./vendor/bin/phpstan analyse --error-format=github
+        #- name: scan sast with laravel Enlightn OSS
+        #  continue-on-error: true
+        #  run: |
+        #    composer require larastan/larastan:^2.0 --dev
+        #    ./vendor/bin/phpstan analyse --error-format=github
         - name: scan sast with laravel Enlightn OSS
           continue-on-error: true
           run: |
