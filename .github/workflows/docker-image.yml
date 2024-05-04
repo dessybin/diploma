@@ -316,14 +316,14 @@ jobs:
             script: /home/deployuser/app/.docker/startup.sh
 
     dast_owasp_zap:
-    needs: [deploy] 
-    runs-on: ubuntu-latest
-    steps:
-      - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.10.0
-        with:
-          artifact_name: owasp-zap-results
-          target: 'http://87.249.53.20/'
+      needs: [deploy] 
+      runs-on: ubuntu-latest
+      steps:
+        - name: ZAP Scan
+          uses: zaproxy/action-full-scan@v0.10.0
+          with:
+            artifact_name: owasp-zap-results
+            target: 'http://87.249.53.20/'
 
     upload-reports:
       needs: [container-check-php,container-check-apache,bearer-sast,codacy-sast,trivy-analyze-repo]
