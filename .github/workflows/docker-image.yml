@@ -23,7 +23,7 @@ jobs:
         - name: scan with composer audit
           continue-on-error: true
           run: |
-          composer audit --format=json > composer-audit-result.json
+            composer audit --format=json > composer-audit-result.json
         
         - name: scan lint
           continue-on-error: true
