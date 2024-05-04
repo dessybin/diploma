@@ -20,28 +20,51 @@ jobs:
           with:
             verion: 2.7.5
             args: --profile --ignore-platform-reqs
-        #- name: scan dependecy
-        #  continue-on-error: true
-        #  run: |
-        #    composer update
-        #    composer require --dev php-parallel-lint/php-parallel-lint
-        #    vendor/bin/parallel-lint --json .
-        #- name: scan sast with laravel Enlightn OSS
-        #  continue-on-error: true
-        #  run: |
-        #    composer require larastan/larastan:^2.0 --dev
-        #    ./vendor/bin/phpstan analyse --error-format=github
-        - name: scan sast with laravel Enlightn OSS
+        - name: scan with composer audit
+          continue-on-error: true
+          run: |
+          composer audit --format=json > composer-audit-result.json
+        
+        - name: scan lint
+          continue-on-error: true
+          run: |
+            composer update
+            composer require --dev php-parallel-lint/php-parallel-lint
+            vendor/bin/parallel-lint --json . > parallel-lint-results.json
+        
+        - name: larastan 
+          continue-on-error: true
+          run: |
+            composer require larastan/larastan:^2.0 --dev
+            ./vendor/bin/phpstan analyse --error-format=github > larastan-results.json
+        
+        - name: scan with noverify
           continue-on-error: true
           run: |
             composer require --dev vkcom/noverify
             ./vendor/bin/noverify-get
-            ./vendor/bin/noverify check --output-json --output='reports.json' .
-        - name: Upload Trivy scan results to GitHub Security tab
+            ./vendor/bin/noverify check --output-json --output='noverify-results.json' .
+
+        - name: Upload NoVerify scan results to GitHub Security tab
           uses: actions/upload-artifact@v4
           with:
             name: noverify-results
-            path: reports.json
+            path: noverify-results.json
+        - name: Upload larastan scan results to GitHub Security tab
+          uses: actions/upload-artifact@v4
+          with:
+            name: larastan-results
+            path: larastan-results.json
+        - name: Upload parallel lint scan results to GitHub Security tab
+          uses: actions/upload-artifact@v4
+          with:
+            name: parallel-lint-results
+            path: parallel-lint-results.json
+        - name: Upload parallel lint scan results to GitHub Security tab
+          uses: actions/upload-artifact@v4
+          with:
+            name: composer-audit-result
+            path: composer-audit-result.json  
 #
 #    lint-php-check:
 #      runs-on: ubuntu-latest
