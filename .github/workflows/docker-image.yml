@@ -222,8 +222,8 @@ jobs:
           uses: zaproxy/action-full-scan@v0.10.0
           with:
             target: 'http://87.249.53.20/'
-    upload:
-      needs: [container-check-apache,container-check-php,bearer-sast,codacy-sast,trivy-analyze-repo]
+    upload-reports:
+      needs: [container-check-apache,container-check-php,bearer-sast,codacy-sast,trivy-analyze-repo,dast_owasp_zap]
       runs-on: ubuntu-latest
       steps:
         - name: download artifact apache
@@ -245,7 +245,11 @@ jobs:
         - name: download artifact bearer
           uses: actions/download-artifact@master
           with:
-            name: bearer-results             
+            name: bearer-results
+        - name: download artifact zap
+          uses: actions/download-artifact@master
+          with:
+            name: zap-scan             
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
@@ -258,4 +262,5 @@ jobs:
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-apache.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif            
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json            
