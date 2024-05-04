@@ -14,6 +14,7 @@ jobs:
         - uses: php-actions/composer@v6
         - name: scan dependecy
           run: |
+            composer update
             composer require --dev php-parallel-lint/php-parallel-lint
             vendor/bin/parallel-lint .
 
