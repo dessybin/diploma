@@ -24,7 +24,13 @@ jobs:
           continue-on-error: true
           run: |
             composer audit --format=json > composer-audit-result.json
-        
+
+        - name: Upload parallel lint scan results to GitHub Security tab
+          uses: actions/upload-artifact@v4
+          with:
+            name: composer-audit-result
+            path: composer-audit-result.json
+
         - name: scan lint
           continue-on-error: true
           run: |
@@ -60,11 +66,7 @@ jobs:
           with:
             name: parallel-lint-results
             path: parallel-lint-results.json
-        - name: Upload parallel lint scan results to GitHub Security tab
-          uses: actions/upload-artifact@v4
-          with:
-            name: composer-audit-result
-            path: composer-audit-result.json  
+
 #
 #    lint-php-check:
 #      runs-on: ubuntu-latest
