@@ -105,7 +105,7 @@ jobs:
           uses: overtrue/phplint@main
           with:
             path: .
-            options: --exclude=vendor --log-sarif
+            options: --exclude=vendor --log-json=lint-php.json
 
     dep-analyze:
       needs: [lint-php-check]
