@@ -30,7 +30,6 @@ jobs:
           continue-on-error: true
           run: |
             composer require enlightn/enlightn
-            php artisan vendor:publish --tag=enlightn
             php artisan enlightn:baseline --ci --details
 
 #    lint-php-check:
