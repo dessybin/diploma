@@ -300,41 +300,34 @@ jobs:
           uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: 'trivy-results-php.sarif'        
-#
-    #deploy:
-    #  needs: [container-check-php, container-check-apache] 
-    #  runs-on: ubuntu-latest
-    #  steps:
-    #    - uses: actions/checkout@v4          
-    #    - name: executing remote ssh commands using password
-    #      uses: appleboy/ssh-action@v1.0.3
-    #      with:
-    #        host: ${{ secrets.SSH_HOST }}
-    #        username: ${{ secrets.SSH_USER }}
-    #        passphrase: ${{ secrets.SSH_PASSPH }}
-    #        key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #        script: /home/deployuser/app/.docker/startup.sh
-#
-    dast_owasp_zap:
+
+    deploy:
+      needs: [container-check-php, container-check-apache] 
       runs-on: ubuntu-latest
       steps:
-        - name: ZAP Scan
-          uses: zaproxy/action-full-scan@v0.10.0
+        - uses: actions/checkout@v4          
+        - name: executing remote ssh commands using password
+          uses: appleboy/ssh-action@v1.0.3
           with:
-            artifact_name: owasp-zap-results
-            target: 'http://87.249.53.20/'
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            passphrase: ${{ secrets.SSH_PASSPH }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            script: /home/deployuser/app/.docker/startup.sh
+
+    dast_owasp_zap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          artifact_name: owasp-zap-results
+          target: 'http://87.249.53.20/'
+          
     upload-reports:
       needs: [dast_owasp_zap]
       runs-on: ubuntu-latest
-      steps:
-        - name: download artifact zap
-          uses: actions/download-artifact@master
-          with:
-            name: owasp-zap-results      
-        - name: Sleep for 10s
-          uses: juliangruber/sleep-action@v2.0.0
-          with:
-            time: 10s
+      steps:   
         - name: download artifact apache
           uses: actions/download-artifact@master
           with:
@@ -354,12 +347,7 @@ jobs:
         - name: download artifact bearer
           uses: actions/download-artifact@master
           with:
-            name: bearer-results
-
-        - name: download artifact php linter
-          uses: actions/download-artifact@master
-          with:
-            name: php-log-sarif           
+            name: bearer-results  
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
@@ -373,5 +361,3 @@ jobs:
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} php-log-sarif.sarif        
