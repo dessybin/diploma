@@ -300,28 +300,29 @@ jobs:
           uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: 'trivy-results-php.sarif'        
-
-    deploy:
-      needs: [container-check-php, container-check-apache] 
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4          
-        - name: executing remote ssh commands using password
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USER }}
-            passphrase: ${{ secrets.SSH_PASSPH }}
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            script: /home/deployuser/app/.docker/startup.sh
-
+#
+    #deploy:
+    #  needs: [container-check-php, container-check-apache] 
+    #  runs-on: ubuntu-latest
+    #  steps:
+    #    - uses: actions/checkout@v4          
+    #    - name: executing remote ssh commands using password
+    #      uses: appleboy/ssh-action@v1.0.3
+    #      with:
+    #        host: ${{ secrets.SSH_HOST }}
+    #        username: ${{ secrets.SSH_USER }}
+    #        passphrase: ${{ secrets.SSH_PASSPH }}
+    #        key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #        script: /home/deployuser/app/.docker/startup.sh
+#
     dast_owasp_zap:
-      needs: deploy
+      needs: 
       runs-on: ubuntu-latest
       steps:
         - name: ZAP Scan
           uses: zaproxy/action-full-scan@v0.10.0
           with:
+            artifact_name: owasp-zap-results
             target: 'http://87.249.53.20/'
     upload-reports:
       needs: [dast_owasp_zap]
@@ -354,7 +355,7 @@ jobs:
         - name: download artifact zap
           uses: actions/download-artifact@master
           with:
-            name: zap_scan
+            name: owasp-zap-results
         - name: download artifact php linter
           uses: actions/download-artifact@master
           with:
