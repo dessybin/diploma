@@ -154,7 +154,7 @@ jobs:
 
     build_and_publish_php:
       runs-on: ubuntu-latest
-      needs: [bearer-sast,codacy-sast,trivy-analyze-repo,dast_owasp_zap]
+      needs: [bearer-sast,codacy-sast,trivy-analyze-repo]
       steps:
         - uses: actions/checkout@v4
         - name: Set up Docker Buildx
