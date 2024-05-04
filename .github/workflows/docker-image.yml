@@ -68,7 +68,7 @@ jobs:
           id: trufflesecrets
           uses: trufflesecurity/trufflehog@main
           with:
-            extra_args: --only-verified
+            extra_args: --github-actions
         - name: save output
           run: echo ${{ steps.trufflesecrets.outputs.truffle }} > trufflehog-result.txt
 
