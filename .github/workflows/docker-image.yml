@@ -7,261 +7,270 @@ permissions:
   actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
   issues: write
 jobs:
-
-    lint-php-check:
+    phpsecscan:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
-        - name: Lint PHP files
-          uses: overtrue/phplint@main
-          with:
-            path: .
-            options: --exclude=vendor
-
-    dep-analyze:
-      needs: [lint-php-check]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: actions/cache@v2
-          id: cache-db
-          with:
-              path: ~/.symfony/cache
-              key: db
-        - uses: symfonycorp/security-checker-action@v5
-    
-    trivy-analyze-repo:
-      needs: [lint-php-check, dep-analyze]
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-        - name: Run Trivy vulnerability scanner in repo mode
-          uses: aquasecurity/trivy-action@master
-          with:
-            scan-type: 'fs'
-            ignore-unfixed: true
-            format: 'sarif'
-            output: 'trivy-fs-results.sarif'
-        - name: Upload Trivy-fs Report
-          uses: actions/upload-artifact@v4
-          with:
-            name: trivy-fs-results
-            path: trivy-fs-results.sarif   
-
-    codacy-sast:
-      needs: [lint-php-check, dep-analyze]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: codacy sast  
-          uses: codacy/codacy-analysis-cli-action@master
-          with:
-            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-            verbose: true
-            output: codacy-results.sarif
-            format: sarif
-            # Adjust severity of non-security issues
-            gh-code-scanning-compat: true
-            # Force 0 exit code to allow SARIF file generation
-            # This will hand over control about PR rejection to the GitHub side
-            max-allowed-issues: 2147483647
-        - name: Upload Codacy Report
-          uses: actions/upload-artifact@v4
-          with:
-            name: codacy-results
-            path: codacy-results.sarif  
-        - name: Upload Codacy scan results to GitHub Security tab
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: 'codacy-results.sarif'
-
-    bearer-sast:
-      needs: [lint-php-check, dep-analyze]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: BEARER scan
-          uses: bearer/bearer-action@v2
-          with:
-            format: sarif
-            output: bearer-results.sarif
-            severity: critical,high,medium,low,warning
-            quiet: false
-            hide-progress-bar: false
-            exit-code: 0
-        - name: Upload Bearer scan results to GitHub Security tab
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: 'bearer-results.sarif'
-        - name: Upload Bearer Report
-          uses: actions/upload-artifact@v4
-          with:
-            name: bearer-results
-            path: bearer-results.sarif  
-
-    build_and_publish_apache:
-      runs-on: ubuntu-latest
-      needs: [bearer-sast,codacy-sast,trivy-analyze-repo]
-      steps:
-        - uses: actions/checkout@v4
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
-        - name: login GHCR
+        - uses: php-actions/composer@v6
+        - name: scan dependecy
           run: |
-            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-        - name: BUILD DOCKER
-          uses: docker/build-push-action@v5
-          with:
-            context: .
-            file: .docker/apache-conf/apache.dockerfile
-            push: true
-            tags: ghcr.io/dessybin/apache_wintercms:latest
-            cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
-            cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
-        - name: Logout
-          run: |
-            docker logout ghcr.io
+            composer require --dev php-parallel-lint/php-parallel-lint
+            vendor/bin/parallel-lint .
 
-    container-check-apache:
-      runs-on: ubuntu-latest
-      needs: build_and_publish_apache
-      steps:
-        - name: login GHCR
-          run: |
-            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-        - name: Run Trivy vulnerability scanner
-          uses: aquasecurity/trivy-action@master
-          with:
-            image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
-            format: 'sarif'
-            output: 'trivy-results-apache.sarif'
-          env:
-            TRIVY_USERNAME: dessybin
-            TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-        - name: Upload Trivy-apache Report
-          uses: actions/upload-artifact@v4
-          with:
-            name: trivy-results-apache
-            path: trivy-results-apache.sarif
-        - name: Upload Trivy scan results to GitHub Security tab
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: 'trivy-results-apache.sarif'  
-        - name: Logout
-          run: |
-            docker logout ghcr.io
-
-    build_and_publish_php:
-      runs-on: ubuntu-latest
-      needs: [bearer-sast,codacy-sast,trivy-analyze-repo]
-      steps:
-        - uses: actions/checkout@v4
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
-        - name: login GHCR
-          run: |
-            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
-        - name: BUILD DOCKER
-          uses: docker/build-push-action@v5
-          with:
-            context: .
-            file: .docker/php/php.dockerfile
-            push: true
-            tags: ghcr.io/dessybin/php_wintercms:latest
-            cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
-            cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
-        - name: Logout
-          run: |
-            docker logout ghcr.io
-
-    container-check-php:
-      runs-on: ubuntu-latest
-      needs: build_and_publish_php
-      steps:
-        - name: login GHCR
-          run: |
-            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io          
-        - name: Run Trivy vulnerability scanner
-          uses: aquasecurity/trivy-action@master
-          with:
-            image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
-            format: 'sarif'
-            output: 'trivy-results-php.sarif'
-          env:
-            TRIVY_USERNAME: dessybin
-            TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
-        - name: Upload Trivy-php Report
-          uses: actions/upload-artifact@v4
-          with:
-            name: trivy-results-php
-            path: trivy-results-php.sarif
-        - name: Upload Trivy scan results to GitHub Security tab
-          uses: github/codeql-action/upload-sarif@v3
-          with:
-            sarif_file: 'trivy-results-php.sarif'        
-
-    deploy:
-      needs: [container-check-php, container-check-apache] 
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4          
-        - name: executing remote ssh commands using password
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USER }}
-            passphrase: ${{ secrets.SSH_PASSPH }}
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            script: /home/deployuser/app/.docker/startup.sh
-
-    dast_owasp_zap:
-      needs: deploy
-      runs-on: ubuntu-latest
-      steps:
-        - name: ZAP Scan
-          uses: zaproxy/action-full-scan@v0.10.0
-          with:
-            target: 'http://87.249.53.20/'
-    upload-reports:
-      needs: [dast_owasp_zap]
-      runs-on: ubuntu-latest
-      steps:
-        - name: download artifact apache
-          uses: actions/download-artifact@master
-          with:
-            name: trivy-results-apache
-        - name: download artifact fs
-          uses: actions/download-artifact@master
-          with:
-            name: trivy-fs-results
-        - name: download artifact php
-          uses: actions/download-artifact@master
-          with:
-            name: trivy-results-php
-        - name: download artifact codacy
-          uses: actions/download-artifact@master
-          with:
-            name: codacy-results
-        - name: download artifact bearer
-          uses: actions/download-artifact@master
-          with:
-            name: bearer-results
-        - name: download artifact zap
-          uses: actions/download-artifact@master
-          with:
-            name: zap_scan             
-        - name: Get current date
-          id: date
-          run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
-        - name: upload to faraday
-          run: |
-            pip install faraday-cli
-            faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
-            faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-php.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-apache.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json            
+#    lint-php-check:
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v3
+#        - name: Lint PHP files
+#          uses: overtrue/phplint@main
+#          with:
+#            path: .
+#            options: --exclude=vendor
+#
+#    dep-analyze:
+#      needs: [lint-php-check]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v2
+#        - uses: actions/cache@v2
+#          id: cache-db
+#          with:
+#              path: ~/.symfony/cache
+#              key: db
+#        - uses: symfonycorp/security-checker-action@v5
+#    
+#    trivy-analyze-repo:
+#      needs: [lint-php-check, dep-analyze]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: Checkout code
+#          uses: actions/checkout@v4
+#        - name: Run Trivy vulnerability scanner in repo mode
+#          uses: aquasecurity/trivy-action@master
+#          with:
+#            scan-type: 'fs'
+#            ignore-unfixed: true
+#            format: 'sarif'
+#            output: 'trivy-fs-results.sarif'
+#        - name: Upload Trivy-fs Report
+#          uses: actions/upload-artifact@v4
+#          with:
+#            name: trivy-fs-results
+#            path: trivy-fs-results.sarif   
+#
+#    codacy-sast:
+#      needs: [lint-php-check, dep-analyze]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v4
+#        - name: codacy sast  
+#          uses: codacy/codacy-analysis-cli-action@master
+#          with:
+#            project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#            verbose: true
+#            output: codacy-results.sarif
+#            format: sarif
+#            # Adjust severity of non-security issues
+#            gh-code-scanning-compat: true
+#            # Force 0 exit code to allow SARIF file generation
+#            # This will hand over control about PR rejection to the GitHub side
+#            max-allowed-issues: 2147483647
+#        - name: Upload Codacy Report
+#          uses: actions/upload-artifact@v4
+#          with:
+#            name: codacy-results
+#            path: codacy-results.sarif  
+#        - name: Upload Codacy scan results to GitHub Security tab
+#          uses: github/codeql-action/upload-sarif@v3
+#          with:
+#            sarif_file: 'codacy-results.sarif'
+#
+#    bearer-sast:
+#      needs: [lint-php-check, dep-analyze]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v4
+#        - name: BEARER scan
+#          uses: bearer/bearer-action@v2
+#          with:
+#            format: sarif
+#            output: bearer-results.sarif
+#            severity: critical,high,medium,low,warning
+#            quiet: false
+#            hide-progress-bar: false
+#            exit-code: 0
+#        - name: Upload Bearer scan results to GitHub Security tab
+#          uses: github/codeql-action/upload-sarif@v3
+#          with:
+#            sarif_file: 'bearer-results.sarif'
+#        - name: Upload Bearer Report
+#          uses: actions/upload-artifact@v4
+#          with:
+#            name: bearer-results
+#            path: bearer-results.sarif  
+#
+#    build_and_publish_apache:
+#      runs-on: ubuntu-latest
+#      needs: [bearer-sast,codacy-sast,trivy-analyze-repo]
+#      steps:
+#        - uses: actions/checkout@v4
+#        - name: Set up Docker Buildx
+#          uses: docker/setup-buildx-action@v3
+#        - name: login GHCR
+#          run: |
+#            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+#        - name: BUILD DOCKER
+#          uses: docker/build-push-action@v5
+#          with:
+#            context: .
+#            file: .docker/apache-conf/apache.dockerfile
+#            push: true
+#            tags: ghcr.io/dessybin/apache_wintercms:latest
+#            cache-from: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache
+#            cache-to: type=registry,ref=ghcr.io/dessybin/apache_wintercms:buildcache,mode=max
+#        - name: Logout
+#          run: |
+#            docker logout ghcr.io
+#
+#    container-check-apache:
+#      runs-on: ubuntu-latest
+#      needs: build_and_publish_apache
+#      steps:
+#        - name: login GHCR
+#          run: |
+#            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+#        - name: Run Trivy vulnerability scanner
+#          uses: aquasecurity/trivy-action@master
+#          with:
+#            image-ref: 'ghcr.io/dessybin/apache_wintercms:latest'
+#            format: 'sarif'
+#            output: 'trivy-results-apache.sarif'
+#          env:
+#            TRIVY_USERNAME: dessybin
+#            TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+#        - name: Upload Trivy-apache Report
+#          uses: actions/upload-artifact@v4
+#          with:
+#            name: trivy-results-apache
+#            path: trivy-results-apache.sarif
+#        - name: Upload Trivy scan results to GitHub Security tab
+#          uses: github/codeql-action/upload-sarif@v3
+#          with:
+#            sarif_file: 'trivy-results-apache.sarif'  
+#        - name: Logout
+#          run: |
+#            docker logout ghcr.io
+#
+#    build_and_publish_php:
+#      runs-on: ubuntu-latest
+#      needs: [bearer-sast,codacy-sast,trivy-analyze-repo]
+#      steps:
+#        - uses: actions/checkout@v4
+#        - name: Set up Docker Buildx
+#          uses: docker/setup-buildx-action@v3
+#        - name: login GHCR
+#          run: |
+#            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io
+#        - name: BUILD DOCKER
+#          uses: docker/build-push-action@v5
+#          with:
+#            context: .
+#            file: .docker/php/php.dockerfile
+#            push: true
+#            tags: ghcr.io/dessybin/php_wintercms:latest
+#            cache-from: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache
+#            cache-to: type=registry,ref=ghcr.io/dessybin/php_wintercms:buildcache,mode=max
+#        - name: Logout
+#          run: |
+#            docker logout ghcr.io
+#
+#    container-check-php:
+#      runs-on: ubuntu-latest
+#      needs: build_and_publish_php
+#      steps:
+#        - name: login GHCR
+#          run: |
+#            docker login --username dessybin --password ${{ secrets.GH_PAT }} ghcr.io          
+#        - name: Run Trivy vulnerability scanner
+#          uses: aquasecurity/trivy-action@master
+#          with:
+#            image-ref: 'ghcr.io/dessybin/php_wintercms:latest'
+#            format: 'sarif'
+#            output: 'trivy-results-php.sarif'
+#          env:
+#            TRIVY_USERNAME: dessybin
+#            TRIVY_PASSWORD: ${{ secrets.GH_PAT }}
+#        - name: Upload Trivy-php Report
+#          uses: actions/upload-artifact@v4
+#          with:
+#            name: trivy-results-php
+#            path: trivy-results-php.sarif
+#        - name: Upload Trivy scan results to GitHub Security tab
+#          uses: github/codeql-action/upload-sarif@v3
+#          with:
+#            sarif_file: 'trivy-results-php.sarif'        
+#
+#    deploy:
+#      needs: [container-check-php, container-check-apache] 
+#      runs-on: ubuntu-latest
+#      steps:
+#        - uses: actions/checkout@v4          
+#        - name: executing remote ssh commands using password
+#          uses: appleboy/ssh-action@v1.0.3
+#          with:
+#            host: ${{ secrets.SSH_HOST }}
+#            username: ${{ secrets.SSH_USER }}
+#            passphrase: ${{ secrets.SSH_PASSPH }}
+#            key: ${{ secrets.SSH_PRIVATE_KEY }}
+#            script: /home/deployuser/app/.docker/startup.sh
+#
+#    dast_owasp_zap:
+#      needs: deploy
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: ZAP Scan
+#          uses: zaproxy/action-full-scan@v0.10.0
+#          with:
+#            target: 'http://87.249.53.20/'
+#    upload-reports:
+#      needs: [dast_owasp_zap]
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: download artifact apache
+#          uses: actions/download-artifact@master
+#          with:
+#            name: trivy-results-apache
+#        - name: download artifact fs
+#          uses: actions/download-artifact@master
+#          with:
+#            name: trivy-fs-results
+#        - name: download artifact php
+#          uses: actions/download-artifact@master
+#          with:
+#            name: trivy-results-php
+#        - name: download artifact codacy
+#          uses: actions/download-artifact@master
+#          with:
+#            name: codacy-results
+#        - name: download artifact bearer
+#          uses: actions/download-artifact@master
+#          with:
+#            name: bearer-results
+#        - name: download artifact zap
+#          uses: actions/download-artifact@master
+#          with:
+#            name: zap_scan             
+#        - name: Get current date
+#          id: date
+#          run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
+#        - name: upload to faraday
+#          run: |
+#            pip install faraday-cli
+#            faraday-cli auth -f http://87.249.53.20:5985 -u ${{ secrets.FARADAY_USERNAME }} -p ${{ secrets.FARADAY_PASSWORD }}
+#            faraday-cli workspace create ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }}
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-php.sarif
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-results-apache.sarif
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif
+#            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json            
