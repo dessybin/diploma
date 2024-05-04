@@ -20,6 +20,9 @@ jobs:
           with:
             verion: 2.7.5
             args: --profile --ignore-platform-reqs
+        - name: 'Dependency Review'
+          uses: actions/dependency-review-action@v4
+          
         - name: scan with composer audit
           continue-on-error: true
           run: |
