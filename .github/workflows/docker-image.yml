@@ -33,7 +33,7 @@ jobs:
             echo "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             php artisan vendor:publish --tag=enlightn --force
             echo "*****************************************************************"
-            php artisan enlightn
+            php artisan enlightn --ci
 
 #    lint-php-check:
 #      runs-on: ubuntu-latest
