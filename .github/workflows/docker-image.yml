@@ -327,6 +327,10 @@ jobs:
       needs: [dast_owasp_zap]
       runs-on: ubuntu-latest
       steps:
+        - name: download artifact zap
+          uses: actions/download-artifact@master
+          with:
+            name: owasp-zap-results      
         - name: Sleep for 10s
           uses: juliangruber/sleep-action@v2.0.0
           with:
@@ -351,10 +355,7 @@ jobs:
           uses: actions/download-artifact@master
           with:
             name: bearer-results
-        - name: download artifact zap
-          uses: actions/download-artifact@master
-          with:
-            name: owasp-zap-results
+
         - name: download artifact php linter
           uses: actions/download-artifact@master
           with:
