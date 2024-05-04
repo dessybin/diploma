@@ -20,12 +20,18 @@ jobs:
           with:
             verion: 2.7.5
             args: --profile --ignore-platform-reqs
-        - name: scan dependecy
+        #- name: scan dependecy
+        #  continue-on-error: true
+        #  run: |
+        #    composer update
+        #    composer require --dev php-parallel-lint/php-parallel-lint
+        #    vendor/bin/parallel-lint --json .
+        - name: scan sast with laravel Enlightn OSS
           continue-on-error: true
           run: |
-            composer update
-            composer require --dev php-parallel-lint/php-parallel-lint
-            vendor/bin/parallel-lint --json .
+            composer require enlightn/enlightn
+            php artisan vendor:publish --tag=enlightn
+            php artisan enlightn:baseline --ci --details
 
 #    lint-php-check:
 #      runs-on: ubuntu-latest
