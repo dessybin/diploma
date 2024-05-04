@@ -316,7 +316,6 @@ jobs:
     #        script: /home/deployuser/app/.docker/startup.sh
 #
     dast_owasp_zap:
-      needs: 
       runs-on: ubuntu-latest
       steps:
         - name: ZAP Scan
