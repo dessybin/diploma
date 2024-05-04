@@ -64,9 +64,13 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3  
-        - uses: trufflesecurity/trufflehog@main
+        - name: trufflehog find secret
+          id: trufflesecrets
+          uses: trufflesecurity/trufflehog@main
           with:
             extra_args: --only-verified
+        - name: save output
+          run: echo ${{ steps.trufflesecrets.outputs.* }} > trufflehog-result.txt
     lint-php-check:
       needs: [secret-repo-check]   
       runs-on: ubuntu-latest
@@ -93,7 +97,7 @@ jobs:
             format: markdown
         - name: save last step artifact
           run: | 
-            echo "${{ steps.local_php_security_checker.outputs.security }}" > lphp-results.md
+            echo "${{ steps.local_php_security_checker.outputs.* }}" > lphp-results.md
         
         - name: Upload lphp-results scan results
           uses: actions/upload-artifact@v4
@@ -114,7 +118,7 @@ jobs:
         - uses: symfonycorp/security-checker-action@v5
     
         - name: Display the vulnerabilities as JSON
-          run: echo ${{ steps.security-check.outputs.vulns }} > security-checker.json
+          run: echo ${{ steps.security-check.outputs.* }} > security-checker.json
         
         - name: Upload symfonycorp/security-checker scan results
           uses: actions/upload-artifact@v4
