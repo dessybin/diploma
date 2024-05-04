@@ -316,6 +316,7 @@ jobs:
             script: /home/deployuser/app/.docker/startup.sh
 
     dast_owasp_zap:
+    needs: [deploy] 
     runs-on: ubuntu-latest
     steps:
       - name: ZAP Scan
@@ -323,9 +324,9 @@ jobs:
         with:
           artifact_name: owasp-zap-results
           target: 'http://87.249.53.20/'
-          
+
     upload-reports:
-      needs: [dast_owasp_zap]
+      needs: [container-check-php,container-check-apache,bearer-sast,codacy-sast,trivy-analyze-repo]
       runs-on: ubuntu-latest
       steps:   
         - name: download artifact apache
