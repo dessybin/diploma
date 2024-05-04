@@ -31,7 +31,7 @@ jobs:
           run: |
             composer require enlightn/enlightn
             echo "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            php artisan vendor:publish --tag=enlightn
+            php artisan vendor:publish --tag=enlightn --force
             echo "*****************************************************************"
             php artisan enlightn
 
