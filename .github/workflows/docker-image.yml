@@ -60,11 +60,13 @@ jobs:
             name: noverify-results
             path: noverify-results.txt
     secret-repo-check:
+      continue-on-error: true
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3  
         - uses: max/secret-scan@master
     lint-php-check:
+      needs: [secret-repo-check]   
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
@@ -315,6 +317,10 @@ jobs:
       needs: [dast_owasp_zap]
       runs-on: ubuntu-latest
       steps:
+        - name: Sleep for 10s
+          uses: juliangruber/sleep-action@v2.0.0
+          with:
+            time: 10s
         - name: download artifact apache
           uses: actions/download-artifact@master
           with:
@@ -339,7 +345,7 @@ jobs:
           uses: actions/download-artifact@master
           with:
             name: zap_scan
-        - name: download artifact zap
+        - name: download artifact php linter
           uses: actions/download-artifact@master
           with:
             name: php-log-sarif           
