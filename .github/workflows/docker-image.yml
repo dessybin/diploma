@@ -25,7 +25,7 @@ jobs:
           run: |
             composer update
             composer require --dev php-parallel-lint/php-parallel-lint
-            vendor/bin/parallel-lint .
+            vendor/bin/parallel-lint --json .
 
 #    lint-php-check:
 #      runs-on: ubuntu-latest
