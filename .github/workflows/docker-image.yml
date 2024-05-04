@@ -29,8 +29,8 @@ jobs:
         - name: scan sast with laravel Enlightn OSS
           continue-on-error: true
           run: |
-          composer require larastan/larastan:^2.0 --dev
-          ./vendor/bin/phpstan analyse --memory-limit=512M
+            composer require larastan/larastan:^2.0 --dev
+            ./vendor/bin/phpstan analyse --memory-limit=512M
 #    lint-php-check:
 #      runs-on: ubuntu-latest
 #      steps:
