@@ -33,6 +33,7 @@ jobs:
             echo "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
             php artisan vendor:publish --tag=enlightn --force
             echo "*****************************************************************"
+            cp .env.example .env
             php artisan enlightn --ci
 
 #    lint-php-check:
