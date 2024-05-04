@@ -249,7 +249,7 @@ jobs:
         - name: download artifact zap
           uses: actions/download-artifact@master
           with:
-            name: zap-scan             
+            name: zap_scan             
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
