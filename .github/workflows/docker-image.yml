@@ -11,15 +11,6 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
-        - name: Setup PHP with PECL extension
-          uses: shivammathur/setup-php@v2
-          with:
-            php-version: '8.1'
-            extensions: gd
-        - uses: php-actions/composer@v6
-          with:
-            verion: 2.7.5
-            args: --profile --ignore-platform-reqs
         - name: Local PHP Security Checker
           uses: docker://pplotka/local-php-security-checker-github-actions
           with:
@@ -44,6 +35,16 @@ jobs:
           with:
             name: composer-audit-result
             path: composer-audit-result.json
+        - name: Setup PHP with PECL extension
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.1'
+            extensions: gd
+        - uses: php-actions/composer@v6
+          with:
+            verion: 2.7.5
+            args: --profile --ignore-platform-reqs
+
 
       #  - name: scan lint
       #    continue-on-error: true
