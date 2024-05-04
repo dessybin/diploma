@@ -102,10 +102,10 @@ jobs:
       steps:
         - uses: actions/checkout@v3
         - name: Lint PHP files
-          uses: overtrue/phplint@main
-          with:
-            path: .
-            options: --exclude=vendor --log-json=lint-php.json
+          run: |
+            curl -Ls https://github.com/overtrue/phplint/releases/latest/download/phplint.phar -o /usr/local/bin/phplint
+            chmod +x /usr/local/bin/phplint
+            /usr/local/bin/phplint --no-cache --no-progress --exclude=vendor --log-sarif=log-sarif.sarif -v
 
     dep-analyze:
       needs: [lint-php-check]
