@@ -30,7 +30,7 @@ jobs:
           continue-on-error: true
           run: |
             composer require larastan/larastan:^2.0 --dev
-            ./vendor/bin/phpstan analyse
+            ./vendor/bin/phpstan analyse --error-format=github
 #    lint-php-check:
 #      runs-on: ubuntu-latest
 #      steps:
