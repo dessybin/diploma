@@ -30,7 +30,7 @@ jobs:
           continue-on-error: true
           run: |
             composer require larastan/larastan:^2.0 --dev
-            ./vendor/bin/phpstan analyse --memory-limit=512M
+            ./vendor/bin/phpstan analyse
 #    lint-php-check:
 #      runs-on: ubuntu-latest
 #      steps:
