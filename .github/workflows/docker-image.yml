@@ -14,27 +14,28 @@ jobs:
         - name: Local PHP Security Checker
           uses: docker://pplotka/local-php-security-checker-github-actions
           with:
-            format: json
+            format: markdown
         - name: save last step artifact
           run: | 
-            echo "${{ steps.local_php_security_checker.outputs.security }}" > lphp-results.json
+            echo "${{ steps.local_php_security_checker.outputs.security }}" > lphp-results.md
         
         - name: Upload lphp-results scan results
           uses: actions/upload-artifact@v4
           with:
             name: lphp-results
-            path: lphp-results.json
+            path: lphp-results.md
 
         - name: scan with composer audit
           continue-on-error: true
           run: |
-            composer audit --format=json > composer-audit-result.json
+            composer audit > composer-audit-result.txt
 
         - name: Upload parallel lint scan results
           uses: actions/upload-artifact@v4
           with:
             name: composer-audit-result
-            path: composer-audit-result.json
+            path: composer-audit-result.txt
+
         - name: Setup PHP with PECL extension
           uses: shivammathur/setup-php@v2
           with:
@@ -66,36 +67,37 @@ jobs:
           run: |
             composer update
             composer require --dev php-parallel-lint/php-parallel-lint
-            vendor/bin/parallel-lint --json . > parallel-lint-results.json
+            vendor/bin/parallel-lint . > parallel-lint-results.txt
+
+        - name: Upload parallel lint scan results
+          uses: actions/upload-artifact@v4
+          with:
+            name: parallel-lint-results
+            path: parallel-lint-results.txt
         
         - name: larastan 
           continue-on-error: true
           run: |
             composer require larastan/larastan:^2.0 --dev
-            ./vendor/bin/phpstan analyse --error-format=github > larastan-results.json
-        
+            ./vendor/bin/phpstan analyse --error-format=table > larastan-results.txt
+        - name: Upload larastan scan results
+          uses: actions/upload-artifact@v4
+          with:
+            name: larastan-results
+            path: larastan-results.txt
+
         - name: scan with noverify
           continue-on-error: true
           run: |
             composer require --dev vkcom/noverify
             ./vendor/bin/noverify-get
-            ./vendor/bin/noverify check --output-json --output='noverify-results.json' .
+            ./vendor/bin/noverify check --output='noverify-results.txt' .
 
         - name: Upload NoVerify scan results
           uses: actions/upload-artifact@v4
           with:
             name: noverify-results
-            path: noverify-results.json
-        - name: Upload larastan scan results
-          uses: actions/upload-artifact@v4
-          with:
-            name: larastan-results
-            path: larastan-results.json
-        - name: Upload parallel lint scan results
-          uses: actions/upload-artifact@v4
-          with:
-            name: parallel-lint-results
-            path: parallel-lint-results.json
+            path: noverify-results.txt
 
     lint-php-check:
       runs-on: ubuntu-latest
@@ -105,12 +107,12 @@ jobs:
           run: |
             curl -Ls https://github.com/overtrue/phplint/releases/latest/download/phplint.phar -o /usr/local/bin/phplint
             chmod +x /usr/local/bin/phplint
-            /usr/local/bin/phplint --no-cache --no-progress --exclude=vendor --log-sarif=log-sarif.sarif -v
+            /usr/local/bin/phplint --no-cache --no-progress --exclude=vendor --log-sarif=php-log-sarif.sarif -v
         - name: Upload NoVerify scan results
           uses: actions/upload-artifact@v4
           with:
-            name: log-sarif
-            path: log-sarif.sarif
+            name: php-log-sarif
+            path: php-log-sarif.sarif
     dep-analyze:
       needs: [lint-php-check]
       runs-on: ubuntu-latest
@@ -123,6 +125,15 @@ jobs:
               key: db
         - uses: symfonycorp/security-checker-action@v5
     
+        - name: Display the vulnerabilities as JSON
+          run: echo ${{ steps.security-check.outputs.vulns }} > security-checker.json
+        
+        - name: Upload symfonycorp/security-checker scan results
+          uses: actions/upload-artifact@v4
+          with:
+            name: security-checker
+            path: security-checker.json     
+              
     trivy-analyze-repo:
       needs: [lint-php-check, dep-analyze]
       runs-on: ubuntu-latest
@@ -343,7 +354,11 @@ jobs:
         - name: download artifact zap
           uses: actions/download-artifact@master
           with:
-            name: zap_scan             
+            name: zap_scan
+        - name: download artifact zap
+          uses: actions/download-artifact@master
+          with:
+            name: php-log-sarif           
         - name: Get current date
           id: date
           run: echo “::set-output name=date::$(date +’%Y-%m-%d’)”
@@ -357,4 +372,5 @@ jobs:
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} trivy-fs-results.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} codacy-results.sarif
             faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} bearer-results.sarif
-            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json            
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} report_json.json
+            faraday-cli tool report -w ${{ github.event.repository.name }}-${{ steps.date.outputs.date }}-${{ github.run_number }} php-log-sarif.sarif        
